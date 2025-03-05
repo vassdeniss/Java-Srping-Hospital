@@ -3,31 +3,29 @@ package denis.f108349.hospital.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.UUID;
-
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "User")
-public class User {
+public class User extends BaseEntity {
     public User() {
-        this.userId = UUID.randomUUID().toString();
+        super();
     }
     
-    @Id
-    @Column("user_id")
-    private String userId;
+    public User(String userId, String username, String passwordHash, Role role) {
+        super(userId);
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
     
     @Size(min = 4, max = 22, message = "Username must be between 4 and 22 characters")
     private String username;
     
     @NotBlank(message = "Password hash is required")
-    @Column("password_hash")
     private String passwordHash;
     
     @NotNull(message = "Role is required")
