@@ -25,8 +25,9 @@ public class UserValidationTest {
         User user = new User(
             UUID.randomUUID().toString(),
             "john_doe",
-            "secureHash123",
-            User.Role.DOCTOR
+            "John",
+            "Doe",
+            "7501020018"
         );
 
         // Act
@@ -41,9 +42,10 @@ public class UserValidationTest {
         // Arrange
         User user = new User(
             UUID.randomUUID().toString(),
-            "",  // Blank username
-            "secureHash123",
-            User.Role.ADMIN
+            " ",
+            "John",
+            "Doe",
+            "7501020018"
         );
 
         // Act
@@ -55,14 +57,14 @@ public class UserValidationTest {
     }
 
     @Test
-    void usernameValidation_WhenExceeds22Characters_ShouldFailWithSizeViolation() {
+    void firstNameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
-        String longUsername = "a".repeat(23);
         User user = new User(
             UUID.randomUUID().toString(),
-            longUsername,
-            "secureHash123",
-            User.Role.PATIENT
+            "john_doe",
+            " ",
+            "Doe",
+            "7501020018"
         );
 
         // Act
@@ -70,18 +72,61 @@ public class UserValidationTest {
 
         // Assert
         assertEquals(1, violations.size());
-        assertEquals("Username must be between 4 and 22 characters", 
+        ConstraintViolation<User> violation = violations.iterator().next();
+        assertEquals("First name is required", violation.getMessage());
+        assertEquals("firstName", violation.getPropertyPath().toString());
+    }
+    
+    @Test
+    void lastNameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
+        // Arrange
+        User user = new User(
+            UUID.randomUUID().toString(),
+            "john_doe",
+            "John",
+            " ",
+            "7501020018"
+        );
+
+        // Act
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        // Assert
+        assertEquals(1, violations.size());
+        ConstraintViolation<User> violation = violations.iterator().next();
+        assertEquals("Last name is required", violation.getMessage());
+        assertEquals("lastName", violation.getPropertyPath().toString());
+    }
+    
+    @Test
+    void egnValidation_WhenInvalidLength_ShouldFailWithSizeViolation() {
+        // Arrange
+        User user = new User(
+            UUID.randomUUID().toString(),
+            "john_doe",
+            "John",
+            "Doe",
+            "750100018"
+        );
+
+        // Act
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        // Assert
+        assertEquals(1, violations.size());
+        assertEquals("Invalid EGN provided", 
                     violations.iterator().next().getMessage());
     }
 
     @Test
-    void passwordValidation_WhenHashEmpty_ShouldFailWithRequiredMessage() {
+    void egnValidation_WhenContainsLetters_ShouldFailWithPatternViolation() {
         // Arrange
         User user = new User(
             UUID.randomUUID().toString(),
-            "jane_doe",
-            "",  // Empty password hash
-            User.Role.DOCTOR
+            "john_doe",
+            "John",
+            "Doe",
+            "75010f0018"
         );
 
         // Act
@@ -89,42 +134,7 @@ public class UserValidationTest {
 
         // Assert
         assertEquals(1, violations.size());
-        assertEquals("Password hash is required", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    void roleValidation_WhenInvalidValue_ShouldFailWithPatternMismatch() {
-        // Arrange
-        User user = new User(
-            UUID.randomUUID().toString(),
-            "invalid_role_user",
-            "secureHash123",
-            null
-        );
-
-        // Act
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        // Assert
-        assertEquals(1, violations.size());
-        assertEquals("Role is required", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    void userValidation_WhenRequiredFieldsNull_ShouldReturnMultipleViolations() {
-        // Arrange
-        User user = new User(
-            UUID.randomUUID().toString(),
-            "",
-            "",
-            null
-        );  // All required fields null
-        
-        // Act
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        // Assert
-        assertEquals(3, violations.size(), 
-                    "Should violate username, password, and role constraints");
+        assertEquals("Invalid EGN provided", 
+                    violations.iterator().next().getMessage());
     }
 }

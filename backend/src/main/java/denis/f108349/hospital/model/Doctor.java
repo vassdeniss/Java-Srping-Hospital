@@ -1,7 +1,6 @@
 package denis.f108349.hospital.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
@@ -15,10 +14,9 @@ public class Doctor extends BaseEntity {
         super();
     }
     
-    public Doctor(String doctorId, String userId, String name, boolean isGp) {
+    public Doctor(String doctorId, String userId, boolean isGp) {
         super(doctorId);
         this.userId = userId;
-        this.name = name;
         this.isGp = isGp;
     }
 
@@ -27,10 +25,6 @@ public class Doctor extends BaseEntity {
     
     @Transient
     private User user;
-
-    @NotBlank(message = "Doctor name is required")
-    @Size(max = 255, message = "Doctor name must be at most 255 characters")
-    private String name;
     
     private boolean isGp;
 

@@ -27,7 +27,6 @@ public class DoctorValidationTest {
         Doctor doctor = new Doctor(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            "Dr. Sarah Smith",
             true
         );
 
@@ -44,7 +43,6 @@ public class DoctorValidationTest {
         Doctor doctor = new Doctor(
             UUID.randomUUID().toString(),
             "   ",  // Blank user ID
-            "Dr. John Doe",
             false
         );
 
@@ -56,64 +54,5 @@ public class DoctorValidationTest {
         ConstraintViolation<Doctor> violation = violations.iterator().next();
         assertEquals("User ID is required", violation.getMessage());
         assertEquals("userId", violation.getPropertyPath().toString());
-    }
-
-    @Test
-    void nameValidation_WhenExceeds255Characters_ShouldFailWithSizeViolation() {
-        // Arrange
-        String longName = "Dr. " + "X".repeat(252); // 256 characters
-        Doctor doctor = new Doctor(
-            UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
-            longName,
-            true
-        );
-
-        // Act
-        Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
-
-        // Assert
-        assertEquals(1, violations.size());
-        ConstraintViolation<Doctor> violation = violations.iterator().next();
-        assertEquals("Doctor name must be at most 255 characters", violation.getMessage());
-        assertEquals("name", violation.getPropertyPath().toString());
-    }
-
-    @Test
-    void nameValidation_WhenExactly255Characters_ShouldPassValidation() {
-        // Arrange
-        String maxLengthName = "Dr. " + "Y".repeat(251); // 255 characters
-        Doctor doctor = new Doctor(
-            UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
-            maxLengthName,
-            false
-        );
-
-        // Act
-        Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
-
-        // Assert
-        assertTrue(violations.isEmpty(), "255 character name should be valid");
-    }
-
-    @Test
-    void nameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
-        // Arrange
-        Doctor doctor = new Doctor(
-            UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
-            "   ",  // Blank name
-            true
-        );
-
-        // Act
-        Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
-
-        // Assert
-        assertEquals(1, violations.size());
-        ConstraintViolation<Doctor> violation = violations.iterator().next();
-        assertEquals("Doctor name is required", violation.getMessage());
-        assertEquals("name", violation.getPropertyPath().toString());
     }
 }

@@ -5,7 +5,7 @@ services:
     image: mysql/mysql-server:latest
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: hospital
+      MYSQL_DATABASE: hospital_spring
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     ports:
@@ -18,12 +18,31 @@ services:
       timeout: 10s
       retries: 5
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: mysql
+      KC_DB_URL_HOST: mysql
+      KC_DB_URL_DATABASE: hospital
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: edge
+    command: ["start-dev"]
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
   backend:
-    build: .
+    build: ./backend
     ports:
       - "8080:8080"
     environment:
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/hospital
+      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/hospital_spring
       SPRING_R2DBC_USERNAME: root
       SPRING_R2DBC_PASSWORD: root
     depends_on:

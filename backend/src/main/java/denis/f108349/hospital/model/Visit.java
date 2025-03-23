@@ -17,7 +17,14 @@ public class Visit extends BaseEntity {
     public Visit() {
         super();
     }
-    
+
+    public Visit(String id, String patientId, String doctorId, LocalDate visitDate) {
+        super(id);
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+        this.visitDate = visitDate;
+    }
+
     @NotBlank(message = "Patient ID is required")
     private String patientId;
     
