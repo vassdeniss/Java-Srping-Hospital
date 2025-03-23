@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
-
 import './Nav.css';
 
-const Nav = () => {
+const Nav = ({
+  onRegisterClick,
+  onLoginClick,
+  onLogoutClick,
+  onProfileClick,
+  isAuthenticated,
+}) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -10,12 +14,25 @@ const Nav = () => {
           MedCare
         </a>
         <div className="nav-menu">
-          <Link to="/register" className="nav-link">
-            Register
-          </Link>
-          <Link to="/login" className="nav-link">
-            Login
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <button onClick={onProfileClick} className="nav-link">
+                Profile
+              </button>
+              <button onClick={onLogoutClick} className="nav-link">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={onRegisterClick} className="nav-link">
+                Register
+              </button>
+              <button onClick={onLoginClick} className="nav-link">
+                Login
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>

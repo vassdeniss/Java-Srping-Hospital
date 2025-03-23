@@ -24,13 +24,16 @@
 }
 
 .nav-link {
-  color: white;
+  background-color: white;
+  color: black;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border: none;
   transition: background-color 0.3s;
+  cursor: pointer;
 }
 
 .nav-link:hover {
   background-color: #1557b0;
+  color: white;
 }
