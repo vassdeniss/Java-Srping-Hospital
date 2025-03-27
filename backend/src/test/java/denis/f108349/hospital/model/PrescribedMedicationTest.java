@@ -28,7 +28,6 @@ public class PrescribedMedicationTest {
         PrescribedMedication pm = new PrescribedMedication(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "500mg",
             "Once daily",
             "7 days",
@@ -46,7 +45,6 @@ public class PrescribedMedicationTest {
     void visitIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         PrescribedMedication pm = new PrescribedMedication(
-            UUID.randomUUID().toString(),
             "   ",
             UUID.randomUUID().toString(),
             "500mg",
@@ -69,7 +67,6 @@ public class PrescribedMedicationTest {
     void medicationIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         PrescribedMedication pm = new PrescribedMedication(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             "   ",
             "500mg",
@@ -94,7 +91,6 @@ public class PrescribedMedicationTest {
         PrescribedMedication pm = new PrescribedMedication(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             longDosage,
             "Valid frequency",
             "Valid duration",
@@ -115,7 +111,6 @@ public class PrescribedMedicationTest {
         // Arrange
         String longFrequency = "F".repeat(101);
         PrescribedMedication pm = new PrescribedMedication(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             "Valid dosage",
@@ -140,7 +135,6 @@ public class PrescribedMedicationTest {
         PrescribedMedication pm = new PrescribedMedication(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "Valid dosage",
             "Valid frequency",
             longDuration,
@@ -163,7 +157,6 @@ public class PrescribedMedicationTest {
         PrescribedMedication pm = new PrescribedMedication(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "Valid dosage",
             "Valid frequency",
             "Valid duration",
@@ -183,7 +176,6 @@ public class PrescribedMedicationTest {
     void instructionsValidation_WhenNull_ShouldPassValidation() {
         // Arrange
         PrescribedMedication pm = new PrescribedMedication(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             "500mg",
@@ -210,7 +202,6 @@ public class PrescribedMedicationTest {
         PrescribedMedication pm = new PrescribedMedication(
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             maxDosage,
             maxFrequency,
             maxDuration,
@@ -222,27 +213,5 @@ public class PrescribedMedicationTest {
 
         // Assert
         assertTrue(violations.isEmpty(), "Max length values should be valid");
-    }
-
-    @Test
-    void idValidation_WhenBlank_ShouldFailFromBaseEntity() {
-        // Arrange
-        PrescribedMedication pm = new PrescribedMedication(
-            "",
-            UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
-            "500mg",
-            "Once daily",
-            "7 days",
-            null
-        );
-
-        // Act
-        Set<ConstraintViolation<PrescribedMedication>> violations = validator.validate(pm);
-
-        // Assert
-        assertEquals(1, violations.size());
-        assertEquals("ID is required", 
-                    violations.iterator().next().getMessage());
     }
 }

@@ -26,7 +26,6 @@ public class PatientValidationTest {
     void patientValidation_WithValidFields_ShouldPassWithoutViolations() {
         // Arrange
         Patient patient = new Patient(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString()
         );
 
@@ -41,7 +40,6 @@ public class PatientValidationTest {
     void userIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Patient patient = new Patient(
-            UUID.randomUUID().toString(),
             "   "
         );
 
@@ -59,7 +57,6 @@ public class PatientValidationTest {
     void lastPaymentDateValidation_WhenFutureDate_ShouldFailWithPastOrPresentViolation() {
         // Arrange
         Patient patient = new Patient(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString()
         );
         patient.setLastPaymentDate(LocalDate.now().plusDays(1));

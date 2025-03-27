@@ -27,7 +27,6 @@ public class DiagnosisTest {
         // Arrange
         Diagnosis diagnosis = new Diagnosis(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "J45",
             "Bronchial asthma"
         );
@@ -43,7 +42,6 @@ public class DiagnosisTest {
     void visitIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Diagnosis diagnosis = new Diagnosis(
-            UUID.randomUUID().toString(),
             "   ",
             "E11",
             "Type 2 diabetes mellitus"
@@ -65,7 +63,6 @@ public class DiagnosisTest {
         String longCode = "C".repeat(51);
         Diagnosis diagnosis = new Diagnosis(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             longCode,
             "Valid name"
         );
@@ -85,7 +82,6 @@ public class DiagnosisTest {
         String longName = "N".repeat(256);
         Diagnosis diagnosis = new Diagnosis(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "M54",
             longName
         );
@@ -104,7 +100,6 @@ public class DiagnosisTest {
         // Arrange
         Diagnosis diagnosis = new Diagnosis(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             "   ",
             "Valid name"
         );
@@ -122,7 +117,6 @@ public class DiagnosisTest {
     void nameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Diagnosis diagnosis = new Diagnosis(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             "R51",
             "   "
@@ -143,7 +137,6 @@ public class DiagnosisTest {
         String validCode = "C".repeat(50);
         Diagnosis diagnosis = new Diagnosis(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             validCode,
             "Valid name"
         );
@@ -160,7 +153,6 @@ public class DiagnosisTest {
         // Arrange
         String validName = "N".repeat(255);
         Diagnosis diagnosis = new Diagnosis(
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
             "Z00",
             validName

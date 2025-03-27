@@ -24,10 +24,7 @@ public class SpecialtyValidationTest {
     @Test
     void specialtyValidation_WithValidFields_ShouldPassWithoutViolations() {
         // Arrange
-        Specialty specialty = new Specialty(
-            UUID.randomUUID().toString(),
-            "Cardiology"
-        );
+        Specialty specialty = new Specialty("Cardiology");
 
         // Act
         Set<ConstraintViolation<Specialty>> violations = validator.validate(specialty);
@@ -39,10 +36,7 @@ public class SpecialtyValidationTest {
     @Test
     void nameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
-        Specialty specialty = new Specialty(
-            UUID.randomUUID().toString(),
-            "   "  // Blank name
-        );
+        Specialty specialty = new Specialty("   ");
 
         // Act
         Set<ConstraintViolation<Specialty>> violations = validator.validate(specialty);
@@ -58,10 +52,7 @@ public class SpecialtyValidationTest {
     void nameValidation_WhenExceeds255Characters_ShouldFailWithSizeViolation() {
         // Arrange
         String longName = "A".repeat(256);
-        Specialty specialty = new Specialty(
-            UUID.randomUUID().toString(),
-            longName
-        );
+        Specialty specialty = new Specialty(longName);
 
         // Act
         Set<ConstraintViolation<Specialty>> violations = validator.validate(specialty);
@@ -77,10 +68,7 @@ public class SpecialtyValidationTest {
     void nameValidation_WhenExactly255Characters_ShouldPassValidation() {
         // Arrange
         String maxLengthName = "C".repeat(255);
-        Specialty specialty = new Specialty(
-            UUID.randomUUID().toString(),
-            maxLengthName
-        );
+        Specialty specialty = new Specialty(maxLengthName);
 
         // Act
         Set<ConstraintViolation<Specialty>> violations = validator.validate(specialty);
@@ -92,10 +80,7 @@ public class SpecialtyValidationTest {
     @Test
     void nameValidation_WhenNameIsNull_ShouldFailWithRequiredMessage() {
         // Arrange
-        Specialty specialty = new Specialty(
-            UUID.randomUUID().toString(),
-            null  // Null name
-        );
+        Specialty specialty = new Specialty(null);
 
         // Act
         Set<ConstraintViolation<Specialty>> violations = validator.validate(specialty);

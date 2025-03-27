@@ -6,8 +6,10 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest {
@@ -23,7 +25,7 @@ public class UserValidationTest {
     void userValidation_WithValidFields_ShouldPassWithoutViolations() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             "john_doe",
             "John",
             "Doe",
@@ -41,7 +43,7 @@ public class UserValidationTest {
     void usernameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             " ",
             "John",
             "Doe",
@@ -60,7 +62,7 @@ public class UserValidationTest {
     void firstNameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             "john_doe",
             " ",
             "Doe",
@@ -81,7 +83,7 @@ public class UserValidationTest {
     void lastNameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             "john_doe",
             "John",
             " ",
@@ -102,7 +104,7 @@ public class UserValidationTest {
     void egnValidation_WhenInvalidLength_ShouldFailWithSizeViolation() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             "john_doe",
             "John",
             "Doe",
@@ -122,7 +124,7 @@ public class UserValidationTest {
     void egnValidation_WhenContainsLetters_ShouldFailWithPatternViolation() {
         // Arrange
         User user = new User(
-            UUID.randomUUID().toString(),
+            "john_doe@mail.bg",
             "john_doe",
             "John",
             "Doe",
@@ -136,5 +138,27 @@ public class UserValidationTest {
         assertEquals(1, violations.size());
         assertEquals("Invalid EGN provided", 
                     violations.iterator().next().getMessage());
+    }
+    
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "wrongmailmail.bg"})
+    void emailValidation_WhenInvalid_ShouldFailWithValidEmailMessage(String email) {
+        // Arrange
+        User user = new User(
+            email,
+            "john_doe",
+            "John",
+            "Doe",
+            "7501020018"
+        );
+
+        // Act
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        // Assert
+        assertEquals(1, violations.size());
+        ConstraintViolation<User> violation = violations.iterator().next();
+        assertEquals("must be a well-formed email address", violation.getMessage());
+        assertEquals("email", violation.getPropertyPath().toString());
     }
 }

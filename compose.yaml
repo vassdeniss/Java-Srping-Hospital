@@ -25,7 +25,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: mysql
       KC_DB_URL_HOST: mysql
-      KC_DB_URL_DATABASE: hospital
+      KC_DB_URL_DATABASE: hospital_keycloak
       KC_DB_USERNAME: root
       KC_DB_PASSWORD: root
       KC_HTTP_ENABLED: "true"

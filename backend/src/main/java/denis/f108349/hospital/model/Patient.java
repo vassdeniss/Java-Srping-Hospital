@@ -17,8 +17,8 @@ public class Patient extends BaseEntity {
         super();
     }
     
-    public Patient(String id, String userId) {
-        super(id);
+    public Patient(String userId) {
+        super();
         this.userId = userId;
     }
 

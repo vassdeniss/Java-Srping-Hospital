@@ -26,10 +26,9 @@ public class VisitValidationTest {
     @Test
     void visitValidation_WithValidFields_ShouldPassWithoutViolations() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId(UUID.randomUUID().toString());
-        visit.setDoctorId(UUID.randomUUID().toString());
-        visit.setVisitDate(LocalDate.now().minusDays(1));
+        Visit visit = new Visit(UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(),
+                LocalDate.now().minusDays(1));
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -41,10 +40,9 @@ public class VisitValidationTest {
     @Test
     void patientIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId("   ");
-        visit.setDoctorId(UUID.randomUUID().toString());
-        visit.setVisitDate(LocalDate.now());
+        Visit visit = new Visit("   ",
+            UUID.randomUUID().toString(),
+            LocalDate.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -59,10 +57,9 @@ public class VisitValidationTest {
     @Test
     void doctorIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId(UUID.randomUUID().toString());
-        visit.setDoctorId("   ");
-        visit.setVisitDate(LocalDate.now());
+        Visit visit = new Visit(UUID.randomUUID().toString(),
+            "   ",
+            LocalDate.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -77,10 +74,9 @@ public class VisitValidationTest {
     @Test
     void visitDateValidation_WhenNull_ShouldFailWithRequiredMessage() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId(UUID.randomUUID().toString());
-        visit.setDoctorId(UUID.randomUUID().toString());
-        visit.setVisitDate(null);
+        Visit visit = new Visit(UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(),
+                null);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -95,10 +91,9 @@ public class VisitValidationTest {
     @Test
     void visitDateValidation_WhenFutureDate_ShouldFailWithPastOrPresentViolation() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId(UUID.randomUUID().toString());
-        visit.setDoctorId(UUID.randomUUID().toString());
-        visit.setVisitDate(LocalDate.now().plusDays(1));
+        Visit visit = new Visit(UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            LocalDate.now().plusDays(1));
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -113,10 +108,9 @@ public class VisitValidationTest {
     @Test
     void visitDateValidation_WhenCurrentDate_ShouldPassValidation() {
         // Arrange
-        Visit visit = new Visit();
-        visit.setPatientId(UUID.randomUUID().toString());
-        visit.setDoctorId(UUID.randomUUID().toString());
-        visit.setVisitDate(LocalDate.now());
+        Visit visit = new Visit(UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            LocalDate.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);

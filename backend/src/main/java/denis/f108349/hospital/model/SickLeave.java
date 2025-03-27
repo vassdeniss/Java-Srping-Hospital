@@ -3,6 +3,7 @@ package denis.f108349.hospital.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
@@ -12,19 +13,9 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @Table("SickLeave")
 public class SickLeave extends BaseEntity {
-    public SickLeave() {
-        super();
-    }
-
-    public SickLeave(String id, String visitId, LocalDate startDate, int days) {
-        super(id);
-        this.visitId = visitId;
-        this.startDate = startDate;
-        this.days = days;
-    }
-
     @NotBlank(message = "Visit ID is required")
     private String visitId;
     

@@ -26,7 +26,6 @@ public class DoctorValidationTest {
         // Arrange
         Doctor doctor = new Doctor(
             UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
             true
         );
 
@@ -41,7 +40,6 @@ public class DoctorValidationTest {
     void userIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Doctor doctor = new Doctor(
-            UUID.randomUUID().toString(),
             "   ",  // Blank user ID
             false
         );

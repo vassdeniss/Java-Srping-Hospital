@@ -25,10 +25,7 @@ public class MedicationTest {
     @Test
     void medicationValidation_WithValidFields_ShouldPassWithoutViolations() {
         // Arrange
-        Medication medication = new Medication(
-            UUID.randomUUID().toString(),
-            "Ibuprofen"
-        );
+        Medication medication = new Medication("Ibuprofen");
 
         // Act
         Set<ConstraintViolation<Medication>> violations = validator.validate(medication);
@@ -40,10 +37,7 @@ public class MedicationTest {
     @Test
     void nameValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
-        Medication medication = new Medication(
-            UUID.randomUUID().toString(),
-            "   "  // Blank name
-        );
+        Medication medication = new Medication("   ");
 
         // Act
         Set<ConstraintViolation<Medication>> violations = validator.validate(medication);
@@ -59,10 +53,7 @@ public class MedicationTest {
     void nameValidation_WhenExceeds255Characters_ShouldFailWithSizeViolation() {
         // Arrange
         String longName = "M".repeat(256);
-        Medication medication = new Medication(
-            UUID.randomUUID().toString(),
-            longName
-        );
+        Medication medication = new Medication(longName);
 
         // Act
         Set<ConstraintViolation<Medication>> violations = validator.validate(medication);
@@ -77,10 +68,7 @@ public class MedicationTest {
     void nameValidation_WhenExactly255Characters_ShouldPassValidation() {
         // Arrange
         String validName = "A".repeat(255);
-        Medication medication = new Medication(
-            UUID.randomUUID().toString(),
-            validName
-        );
+        Medication medication = new Medication(validName);
 
         // Act
         Set<ConstraintViolation<Medication>> violations = validator.validate(medication);
