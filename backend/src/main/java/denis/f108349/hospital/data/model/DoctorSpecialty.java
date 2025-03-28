@@ -1,4 +1,4 @@
-package denis.f108349.hospital.model;
+package denis.f108349.hospital.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

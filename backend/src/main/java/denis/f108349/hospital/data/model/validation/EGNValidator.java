@@ -1,4 +1,4 @@
-package denis.f108349.hospital.model.validation;
+package denis.f108349.hospital.data.model.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,4 +1,4 @@
-package denis.f108349.hospital.model;
+package denis.f108349.hospital.data.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

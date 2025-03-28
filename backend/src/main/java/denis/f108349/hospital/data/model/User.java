@@ -1,6 +1,6 @@
-package denis.f108349.hospital.model;
+package denis.f108349.hospital.data.model;
 
-import denis.f108349.hospital.model.validation.ValidEGN;
+import denis.f108349.hospital.data.model.validation.ValidEGN;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,6 +14,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table(name = "User")
 public class User extends BaseEntity {
+    @NotBlank(message = "Keycloak ID is required")
+    private String keycloakId;
+    
     @Email
     private String email;
     
