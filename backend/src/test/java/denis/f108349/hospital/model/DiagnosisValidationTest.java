@@ -1,5 +1,6 @@
 package denis.f108349.hospital.model;
 
+import denis.f108349.hospital.data.model.Diagnosis;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DiagnosisTest {
+public class DiagnosisValidationTest {
     private static Validator validator;
 
     @BeforeAll

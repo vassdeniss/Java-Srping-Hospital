@@ -1,5 +1,6 @@
 package denis.f108349.hospital.model;
 
+import denis.f108349.hospital.data.model.Visit;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
