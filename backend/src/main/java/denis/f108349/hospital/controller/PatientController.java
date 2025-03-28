@@ -32,7 +32,8 @@ public class PatientController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Patient created successfully",
-                     content = @Content(schema = @Schema(implementation = Patient.class)))
+                     content = @Content(schema = @Schema(implementation = Patient.class))),
+        @ApiResponse(responseCode = "400", description = "Validation errors")
     })
     @PostMapping("/create")
     public Mono<Patient> createPatient(@Valid @RequestBody UserRegistrationRequest request) {
