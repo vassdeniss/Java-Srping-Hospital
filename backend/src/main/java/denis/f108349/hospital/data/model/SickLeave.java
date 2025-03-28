@@ -18,18 +18,10 @@ import java.time.LocalDate;
 public class SickLeave extends BaseEntity {
     @NotBlank(message = "Visit ID is required")
     private String visitId;
-    
-    @Transient
-    private Visit visit;
 
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
 
     @Positive(message = "Days must be a positive number")
     private int days;
-    
-    public void setVisitId(Visit visit) {
-        this.visit = visit;
-        this.visitId = visit != null ? visit.getId() : null;
-    }
 }

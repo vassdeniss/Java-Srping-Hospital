@@ -7,14 +7,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
     private final PatientRepository patientRepository;
 
     @Override
-    public Mono<Patient> createPatient(String userId) {
-        Patient patient = new Patient(userId);
+    public Mono<Patient> createPatient(UUID userId) {
+        Patient patient = new Patient(userId, null, null);
         
         return this.patientRepository.save(patient);
     }

@@ -4,14 +4,13 @@ import denis.f108349.hospital.data.model.validation.ValidEGN;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "User")
 public class User extends BaseEntity {
     @NotBlank(message = "Keycloak ID is required")
