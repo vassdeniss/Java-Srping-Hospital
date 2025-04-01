@@ -46,4 +46,41 @@ public class PatientServiceTest {
 
         verify(this.patientRepository, times(1)).save(any(Patient.class));
     }
+    
+    @Test
+    void getUserById_ShouldReturnUser_WhenValidId() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Patient patient = new Patient(id, null, null);
+        
+        when(this.patientRepository.findById(id)).thenReturn(Mono.just(patient));
+        
+        // Act
+        Mono<Patient> result = this.patientService.getPatientById(id);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextMatches(createdUser -> createdUser.getUserId().equals(id))
+                .verifyComplete();
+        
+        verify(this.patientRepository, times(1)).findById(id);
+    }
+    
+    @Test
+    void getUserById_ShouldReturnNull_WhenInvalidId() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        
+        when(this.patientRepository.findById(id)).thenReturn(Mono.empty());
+        
+        // Act
+        Mono<Patient> result = this.patientService.getPatientById(id);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+        
+        verify(this.patientRepository, times(1)).findById(id);
+    }
 }
