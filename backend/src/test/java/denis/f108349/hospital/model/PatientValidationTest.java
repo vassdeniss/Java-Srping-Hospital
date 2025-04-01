@@ -38,7 +38,7 @@ public class PatientValidationTest {
     }
 
     @Test
-    void userIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
+    void userIdValidation_WhenNull_ShouldFailWithRequiredMessage() {
         // Arrange
         Patient patient = new Patient(
             null, null, null
