@@ -12,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,5 +47,42 @@ public class UserServiceTest {
             .verifyComplete();
 
         verify(this.userRepository, times(1)).save(any(User.class));
+    }
+    
+    @Test
+    void getUserById_ShouldReturnUser_WhenValidId() {
+        // Arrange
+        User user = new User("keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
+        UUID id = UUID.randomUUID();
+        
+        when(this.userRepository.findById(id)).thenReturn(Mono.just(user));
+        
+        // Act
+        Mono<User> result = this.userService.getUserById(id);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextMatches(createdUser -> createdUser.getKeycloakId().equals("keycloakId"))
+                .verifyComplete();
+        
+        verify(this.userRepository, times(1)).findById(id);
+    }
+    
+    @Test
+    void getUserById_ShouldReturnNull_WhenInvalidId() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        
+        when(this.userRepository.findById(id)).thenReturn(Mono.empty());
+        
+        // Act
+        Mono<User> result = this.userService.getUserById(id);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+        
+        verify(this.userRepository, times(1)).findById(id);
     }
 }
