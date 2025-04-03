@@ -29,4 +29,11 @@ public class GlobalExceptionHandler {
         ValidationErrorResponse errorResponse = new ValidationErrorResponse("Validation failed", errors);
         return Mono.just(ResponseEntity.badRequest().body(errorResponse));
     }
+    
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Mono<ResponseEntity<String>> handleEntityNotFound(EntityNotFoundException ex) {
+        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage()));
+    }
 }

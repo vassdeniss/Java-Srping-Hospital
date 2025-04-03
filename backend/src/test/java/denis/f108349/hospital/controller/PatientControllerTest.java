@@ -1,5 +1,6 @@
 package denis.f108349.hospital.controller;
 
+import denis.f108349.hospital.dto.PatientWithUser;
 import denis.f108349.hospital.dto.UserRegistrationRequest;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.data.model.User;
@@ -57,7 +58,8 @@ public class PatientControllerTest {
 
         verify(this.userService, times(1)).createUser(any(UserRegistrationRequest.class));
         verify(this.patientService, times(1)).createPatient(any(String.class));
-    }       
+    }  
+    
     @Test
     void createPatient_ShouldReturnValidationError_WhenInvalidRequest() {
         // Arrange
@@ -71,4 +73,46 @@ public class PatientControllerTest {
             .exchange()
             .expectStatus().isBadRequest();
     }
+    
+    @Test
+    void getPatientById_ShouldReturnPatient_WhenValidRequest() {
+        // Arrange
+        User mockUser = new User(
+                "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
+        mockUser.setId(UUID.randomUUID().toString());
+        Patient mockPatient = new Patient(mockUser.getId(), null, null);
+        mockPatient.setId(UUID.randomUUID().toString());
+
+        when(this.userService.getUserById(mockUser.getId())).thenReturn(Mono.just(mockUser));
+        when(this.patientService.getPatientById(mockPatient.getId())).thenReturn(Mono.just(mockPatient));
+
+        // Act and Assert
+        this.webTestClient.get()
+                .uri("/api/patients/" + mockPatient.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PatientWithUser.class);
+
+        verify(this.userService, times(1)).getUserById(mockUser.getId());
+        verify(this.patientService, times(1)).getPatientById(mockPatient.getId());
+    } 
+    
+    @Test
+    void getPatientById_ShouldReturnNotFound_WhenInvalidRequest() {
+        // Arrange
+        Patient mockPatient = new Patient(UUID.randomUUID().toString(), null, null);
+        mockPatient.setId(UUID.randomUUID().toString());
+
+        when(this.userService.getUserById(any(String.class))).thenReturn(Mono.empty());
+        when(this.patientService.getPatientById(any(String.class))).thenReturn(Mono.just(mockPatient));
+
+        // Act and Assert
+        this.webTestClient.get()
+                .uri("/api/patients/" + mockPatient.getId())
+                .exchange()
+                .expectStatus().isNotFound();
+
+        verify(this.userService, times(1)).getUserById(any(String.class));
+        verify(this.patientService, times(1)).getPatientById(any(String.class));
+    } 
 }
