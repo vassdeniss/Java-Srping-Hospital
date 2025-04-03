@@ -37,10 +37,10 @@ public class PatientControllerTest {
         // Arrange
         User mockUser = new User(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        mockUser.setId(UUID.randomUUID());
+        mockUser.setId(UUID.randomUUID().toString());
         UserRegistrationRequest request = new UserRegistrationRequest(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        Patient mockPatient = new Patient(UUID.randomUUID(), null, null);
+        Patient mockPatient = new Patient(UUID.randomUUID().toString(), null, null);
 
         when(this.userService.createUser(request)).thenReturn(Mono.just(mockUser));
         when(this.patientService.createPatient(mockUser.getId())).thenReturn(Mono.just(mockPatient));
@@ -56,7 +56,7 @@ public class PatientControllerTest {
                 .isEqualTo(mockPatient);
 
         verify(this.userService, times(1)).createUser(any(UserRegistrationRequest.class));
-        verify(this.patientService, times(1)).createPatient(any(UUID.class));
+        verify(this.patientService, times(1)).createPatient(any(String.class));
     }       
     @Test
     void createPatient_ShouldReturnValidationError_WhenInvalidRequest() {

@@ -53,7 +53,7 @@ public class UserServiceTest {
     void getUserById_ShouldReturnUser_WhenValidId() {
         // Arrange
         User user = new User("keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         
         when(this.userRepository.findById(id)).thenReturn(Mono.just(user));
         
@@ -71,7 +71,7 @@ public class UserServiceTest {
     @Test
     void getUserById_ShouldReturnNull_WhenInvalidId() {
         // Arrange
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         
         when(this.userRepository.findById(id)).thenReturn(Mono.empty());
         

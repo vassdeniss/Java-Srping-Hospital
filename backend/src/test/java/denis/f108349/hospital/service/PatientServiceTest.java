@@ -31,7 +31,7 @@ public class PatientServiceTest {
     @Test
     void createPatient_ShouldReturnPatient_WhenValidUserId() {
         // Arrange
-        UUID userId = UUID.randomUUID();
+        String userId = UUID.randomUUID().toString();
         Patient patient = new Patient(userId, null, null);
 
         when(this.patientRepository.save(any(Patient.class))).thenReturn(Mono.just(patient));
@@ -50,7 +50,7 @@ public class PatientServiceTest {
     @Test
     void getUserById_ShouldReturnUser_WhenValidId() {
         // Arrange
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         Patient patient = new Patient(id, null, null);
         
         when(this.patientRepository.findById(id)).thenReturn(Mono.just(patient));
@@ -69,7 +69,7 @@ public class PatientServiceTest {
     @Test
     void getUserById_ShouldReturnNull_WhenInvalidId() {
         // Arrange
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         
         when(this.patientRepository.findById(id)).thenReturn(Mono.empty());
         

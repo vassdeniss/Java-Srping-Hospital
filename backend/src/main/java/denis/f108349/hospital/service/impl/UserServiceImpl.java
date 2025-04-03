@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -24,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public Mono<User> getUserById(UUID id) {
+    public Mono<User> getUserById(String id) {
         return this.userRepository.findById(id);
     }
 }
