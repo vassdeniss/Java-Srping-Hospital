@@ -4,6 +4,7 @@ import Root from './Pages/Root';
 import HomePage from './Pages/HomePage';
 
 import './App.css';
+import PatientDashboard from './Pages/PatientDashboard';
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
+      },
+      {
+        path: '/dashboard',
+        element: <PatientDashboard />,
       },
     ],
   },

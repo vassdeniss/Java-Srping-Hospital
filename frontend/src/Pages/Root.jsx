@@ -4,21 +4,16 @@ import { createUserInBackend, updateUserRoleToPatient } from '../api/userApi';
 
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 const Root = () => {
   const { keycloak, initialized } = useKeycloak();
-  const hasRegistered = useRef(false);
 
   useEffect(() => {
-    if (
-      initialized &&
-      keycloak.authenticated &&
-      !hasRegistered.current &&
-      keycloak.tokenParsed
-    ) {
+    if (initialized && keycloak.authenticated && keycloak.tokenParsed) {
       const isNew =
-        !keycloak.tokenParsed?.realm_access?.roles.includes('patient');
+        !keycloak.tokenParsed?.realm_access?.roles.includes('patient') &&
+        !keycloak.tokenParsed?.realm_access?.roles.includes('doctor');
 
       const data = {
         keycloakId: keycloak.tokenParsed.sub,
@@ -73,7 +68,12 @@ const Root = () => {
         onProfileClick={handleProfile}
         isAuthenticated={keycloak.authenticated}
       />
-      <Outlet />
+      <Outlet
+        context={{
+          isAuth: keycloak.authenticated,
+          redirectToLogin: handleLogin,
+        }}
+      />
       <Footer />
     </>
   );
