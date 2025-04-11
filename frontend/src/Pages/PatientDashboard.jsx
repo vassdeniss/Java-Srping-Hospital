@@ -1,25 +1,48 @@
 import { useOutletContext } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getPatient } from '../api/userApi';
+
 import './patientDashboard.css';
 
 const PatientDashboard = () => {
-  const { isAuth, redirectToLogin } = useOutletContext();
+  const { isAuth, id, redirectToLogin } = useOutletContext();
+  const [patient, setPatient] = useState(null);
 
-  if (!isAuth) {
-    return redirectToLogin();
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      if (!isAuth) {
+        return redirectToLogin();
+      }
+
+      try {
+        const data = await getPatient(id);
+        setPatient(data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    fetchPatientData();
+  }, []);
+
+  if (!patient) {
+    return <div>Loading...</div>;
   }
+
+  console.log(patient);
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Welcome, Patient!</h1>
-
+      <h1 className="dashboard-title">Welcome, {patient.user.username}!</h1>
       <div className="dashboard-section">
         <h2 className="section-title">Your Profile</h2>
         <div className="profile-card">
           <p>
-            <strong>Name:</strong> John Doe
+            <strong>Name:</strong> {patient.user.firstName}{' '}
+            {patient.user.lastName}
           </p>
           <p>
-            <strong>EGN:</strong> 1234567890
+            <strong>EGN:</strong> {patient.user.egn}
           </p>
           <p>
             <strong>Insurance Status:</strong> Paid

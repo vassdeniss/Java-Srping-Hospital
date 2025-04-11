@@ -73,6 +73,7 @@ const Root = () => {
       <Outlet
         context={{
           isAuth: keycloak.authenticated,
+          id: keycloak.tokenParsed.sub,
           redirectToLogin: handleLogin,
         }}
       />
