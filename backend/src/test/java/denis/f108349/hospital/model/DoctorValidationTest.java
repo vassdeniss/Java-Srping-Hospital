@@ -38,7 +38,7 @@ public class DoctorValidationTest {
     }
 
     @Test
-    void userIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
+    void keycloakIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Doctor doctor = new Doctor(
             "   ",  // Blank user ID
@@ -51,7 +51,7 @@ public class DoctorValidationTest {
         // Assert
         assertEquals(1, violations.size());
         ConstraintViolation<Doctor> violation = violations.iterator().next();
-        assertEquals("User ID is required", violation.getMessage());
-        assertEquals("userId", violation.getPropertyPath().toString());
+        assertEquals("Keycloak ID is required", violation.getMessage());
+        assertEquals("keycloakId", violation.getPropertyPath().toString());
     }
 }

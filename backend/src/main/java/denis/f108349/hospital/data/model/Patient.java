@@ -1,6 +1,6 @@
 package denis.f108349.hospital.data.model;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Table("Patient")
 public class Patient extends BaseEntity {
-    @NotNull(message = "User ID is required")
-    private String userId;
+    @NotBlank(message = "Keycloak ID is required")
+    private String keycloakId;
 
     private String gpDoctorId;
 

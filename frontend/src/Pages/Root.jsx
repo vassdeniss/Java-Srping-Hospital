@@ -28,7 +28,9 @@ const Root = () => {
         try {
           if (isNew) {
             await updateUserRoleToPatient(data.keycloakId);
-            await createUserInBackend(data);
+            await createUserInBackend({
+              id: data.keycloakId,
+            });
           }
         } catch (error) {
           console.error('Error during user setup:', error);

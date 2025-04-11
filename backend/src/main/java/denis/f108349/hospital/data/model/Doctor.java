@@ -11,8 +11,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table("Doctor")
 public class Doctor extends BaseEntity {
-    @NotBlank(message = "User ID is required")
-    private String userId;
+    @NotBlank(message = "Keycloak ID is required")
+    private String keycloakId;
     
     private boolean isGp;
 }

@@ -1,7 +1,7 @@
 package denis.f108349.hospital.controller;
 
+import denis.f108349.hospital.dto.PatientRequest;
 import denis.f108349.hospital.dto.PatientWithUser;
-import denis.f108349.hospital.dto.UserRegistrationRequest;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.PatientService;
@@ -17,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/patients")
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class PatientController {
 
     @Operation(
         summary = "Create a new patient",
-        description = "Registers a new patient by first creating a user and then assigning them as a patient."
+        description = "Registers a new patient with a specified keycloak ID."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Patient created successfully",
@@ -37,13 +35,12 @@ public class PatientController {
         @ApiResponse(responseCode = "400", description = "Validation errors")
     })
     @PostMapping("/create")
-    public Mono<Patient> createPatient(@Valid @RequestBody UserRegistrationRequest request) {
-        return this.userService.createUser(request)
-            .flatMap(user -> this.patientService.createPatient(user.getId()));
+    public Mono<Patient> createPatient(@Valid @RequestBody PatientRequest request) {
+        return this.patientService.createPatient(request.getId());
     }
     
     @Operation(
-        summary = "Get patient by ID",
+        summary = "Get patient by keycloak ID",
         description = "Retrieves the patient details and associated user by the patient ID."
     )
     @ApiResponses(value = {
@@ -53,12 +50,10 @@ public class PatientController {
     })
     @GetMapping("/{id}")
     public Mono<PatientWithUser> getPatientById(@PathVariable String id) {
-        return this.patientService.getPatientById(id)
-                .flatMap(patient -> {
-                    return this.userService.getUserById(patient.getUserId())
-                            .flatMap(user -> Mono.just(new PatientWithUser(patient, user)))
-                            .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found")));
-                })
+        return this.patientService.getPatientByKeycloakId(id)
+                .flatMap(patient -> this.userService.getUserById(id)
+                        .flatMap(user -> Mono.just(new PatientWithUser(patient, user)))
+                        .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found"))))
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")));
     }
 }

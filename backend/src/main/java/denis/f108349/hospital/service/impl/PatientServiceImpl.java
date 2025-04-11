@@ -19,7 +19,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Mono<Patient> getPatientById(String id) {
-        return this.patientRepository.findById(id);
+    public Mono<Patient> getPatientByKeycloakId(String id) {
+        return this.patientRepository.findByKeycloakId(id);
     }
 }

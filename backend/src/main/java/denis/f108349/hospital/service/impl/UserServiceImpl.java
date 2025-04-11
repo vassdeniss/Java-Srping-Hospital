@@ -1,28 +1,45 @@
 package denis.f108349.hospital.service.impl;
 
-import denis.f108349.hospital.data.repo.UserRepository;
-import denis.f108349.hospital.dto.UserRegistrationRequest;
-import denis.f108349.hospital.data.model.User;
+import denis.f108349.hospital.dto.KeycloakUser;
+import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final ModelMapper modelMapper = new ModelMapper();
-    private final UserRepository userRepository;
+    private final UsersResource usersResource;
     
     @Override
-    public Mono<User> createUser(UserRegistrationRequest request) {
-        User user = this.modelMapper.map(request, User.class);
-        return this.userRepository.save(user);
+    public Mono<KeycloakUser> getUserById(String id) {
+        return Mono.create(sink -> {
+            try {
+                UserRepresentation user = this.usersResource.get(id).toRepresentation();   
+                
+                KeycloakUser mappedUser = new KeycloakUser(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    extractEgn(user)
+                );
+                
+                sink.success(mappedUser);
+            } catch (Exception e) {
+                sink.error(new EntityNotFoundException("User not found in Keycloak"));
+            }
+        });
     }
     
-    @Override
-    public Mono<User> getUserById(String id) {
-        return this.userRepository.findById(id);
+    private String extractEgn(UserRepresentation user) {
+        if (user.getAttributes() != null && user.getAttributes().get("egn") != null) {
+            return user.getAttributes().get("egn").stream().findFirst().orElse(null);
+        }
+        return null;
     }
 }

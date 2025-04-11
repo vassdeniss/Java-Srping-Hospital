@@ -41,46 +41,46 @@ public class PatientServiceTest {
 
         // Assert
         StepVerifier.create(result)
-            .expectNextMatches(createdPatient -> createdPatient.getUserId().equals(userId))
+            .expectNextMatches(createdPatient -> createdPatient.getKeycloakId().equals(userId))
             .verifyComplete();
 
         verify(this.patientRepository, times(1)).save(any(Patient.class));
     }
     
     @Test
-    void getUserById_ShouldReturnUser_WhenValidId() {
+    void getPatientByKeycloakId_ShouldReturnPatient_WhenValidId() {
         // Arrange
         String id = UUID.randomUUID().toString();
         Patient patient = new Patient(id, null, null);
         
-        when(this.patientRepository.findById(id)).thenReturn(Mono.just(patient));
+        when(this.patientRepository.findByKeycloakId(id)).thenReturn(Mono.just(patient));
         
         // Act
-        Mono<Patient> result = this.patientService.getPatientById(id);
+        Mono<Patient> result = this.patientService.getPatientByKeycloakId(id);
         
         // Act
         StepVerifier.create(result)
-                .expectNextMatches(createdUser -> createdUser.getUserId().equals(id))
+                .expectNextMatches(createdUser -> createdUser.getKeycloakId().equals(id))
                 .verifyComplete();
         
-        verify(this.patientRepository, times(1)).findById(id);
+        verify(this.patientRepository, times(1)).findByKeycloakId(id);
     }
     
     @Test
-    void getUserById_ShouldReturnNull_WhenInvalidId() {
+    void getPatientByKeycloakId_ShouldReturnNull_WhenInvalidId() {
         // Arrange
         String id = UUID.randomUUID().toString();
         
-        when(this.patientRepository.findById(id)).thenReturn(Mono.empty());
+        when(this.patientRepository.findByKeycloakId(id)).thenReturn(Mono.empty());
         
         // Act
-        Mono<Patient> result = this.patientService.getPatientById(id);
+        Mono<Patient> result = this.patientService.getPatientByKeycloakId(id);
         
         // Act
         StepVerifier.create(result)
                 .expectComplete()
                 .verify();
         
-        verify(this.patientRepository, times(1)).findById(id);
+        verify(this.patientRepository, times(1)).findByKeycloakId(id);
     }
 }

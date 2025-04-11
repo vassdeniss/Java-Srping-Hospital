@@ -1,9 +1,8 @@
 package denis.f108349.hospital.controller;
 
+import denis.f108349.hospital.dto.KeycloakUser;
 import denis.f108349.hospital.dto.PatientWithUser;
-import denis.f108349.hospital.dto.UserRegistrationRequest;
 import denis.f108349.hospital.data.model.Patient;
-import denis.f108349.hospital.data.model.User;
 import denis.f108349.hospital.service.PatientService;
 import denis.f108349.hospital.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -32,71 +31,63 @@ public class PatientControllerTest {
 
     @MockBean
     private PatientService patientService;
-    
+
     @Test
     void createPatient_ShouldReturnPatient_WhenValidRequest() {
         // Arrange
-        User mockUser = new User(
-                "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        mockUser.setId(UUID.randomUUID().toString());
-        UserRegistrationRequest request = new UserRegistrationRequest(
-                "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        Patient mockPatient = new Patient(UUID.randomUUID().toString(), null, null);
+        UUID uuid = UUID.randomUUID();
+        Patient mockPatient = new Patient(uuid.toString(), null, null);
 
-        when(this.userService.createUser(request)).thenReturn(Mono.just(mockUser));
-        when(this.patientService.createPatient(mockUser.getId())).thenReturn(Mono.just(mockPatient));
+        when(this.patientService.createPatient(uuid.toString())).thenReturn(Mono.just(mockPatient));
 
         // Act and Assert
         this.webTestClient.post()
                 .uri("/api/patients/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(request)
+                .bodyValue(uuid)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Patient.class)
                 .isEqualTo(mockPatient);
 
-        verify(this.userService, times(1)).createUser(any(UserRegistrationRequest.class));
         verify(this.patientService, times(1)).createPatient(any(String.class));
     }  
-    
+
     @Test
     void createPatient_ShouldReturnValidationError_WhenInvalidRequest() {
         // Arrange
-        UserRegistrationRequest invalidRequest = new UserRegistrationRequest(
-            "keycloakId", "testemail.com", "testUser", "First", "Last", "7501020018");
-        
+        String invalid = "aaaaaa";
+
         this.webTestClient.post()
             .uri("/api/patients/create")
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(invalidRequest)
+            .bodyValue(invalid)
             .exchange()
             .expectStatus().isBadRequest();
     }
-    
+
     @Test
     void getPatientById_ShouldReturnPatient_WhenValidRequest() {
         // Arrange
-        User mockUser = new User(
+        KeycloakUser mockUser = new KeycloakUser(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        mockUser.setId(UUID.randomUUID().toString());
-        Patient mockPatient = new Patient(mockUser.getId(), null, null);
+        Patient mockPatient = new Patient("keycloakId", null, null);
         mockPatient.setId(UUID.randomUUID().toString());
 
-        when(this.userService.getUserById(mockUser.getId())).thenReturn(Mono.just(mockUser));
-        when(this.patientService.getPatientById(mockPatient.getId())).thenReturn(Mono.just(mockPatient));
+        when(this.userService.getUserById(mockPatient.getKeycloakId())).thenReturn(Mono.just(mockUser));
+        when(this.patientService.getPatientByKeycloakId(mockPatient.getKeycloakId())).thenReturn(Mono.just(mockPatient));
 
         // Act and Assert
         this.webTestClient.get()
-                .uri("/api/patients/" + mockPatient.getId())
+                .uri("/api/patients/" + mockPatient.getKeycloakId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(PatientWithUser.class);
 
-        verify(this.userService, times(1)).getUserById(mockUser.getId());
-        verify(this.patientService, times(1)).getPatientById(mockPatient.getId());
+        verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
+        verify(this.patientService, times(1)).getPatientByKeycloakId(mockPatient.getKeycloakId());
     } 
-    
+
     @Test
     void getPatientById_ShouldReturnNotFound_WhenInvalidRequest() {
         // Arrange
@@ -104,7 +95,7 @@ public class PatientControllerTest {
         mockPatient.setId(UUID.randomUUID().toString());
 
         when(this.userService.getUserById(any(String.class))).thenReturn(Mono.empty());
-        when(this.patientService.getPatientById(any(String.class))).thenReturn(Mono.just(mockPatient));
+        when(this.patientService.getPatientByKeycloakId(any(String.class))).thenReturn(Mono.just(mockPatient));
 
         // Act and Assert
         this.webTestClient.get()
@@ -113,6 +104,6 @@ public class PatientControllerTest {
                 .expectStatus().isNotFound();
 
         verify(this.userService, times(1)).getUserById(any(String.class));
-        verify(this.patientService, times(1)).getPatientById(any(String.class));
+        verify(this.patientService, times(1)).getPatientByKeycloakId(any(String.class));
     } 
 }

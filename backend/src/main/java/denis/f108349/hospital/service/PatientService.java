@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 public interface PatientService {
     Mono<Patient> createPatient(String userId);
     
-    Mono<Patient> getPatientById(String id);
+    Mono<Patient> getPatientByKeycloakId(String id);
 }

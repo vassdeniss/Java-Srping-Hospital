@@ -38,10 +38,10 @@ public class PatientValidationTest {
     }
 
     @Test
-    void userIdValidation_WhenNull_ShouldFailWithRequiredMessage() {
+    void keycloakIdValidation_WhenBlank_ShouldFailWithRequiredMessage() {
         // Arrange
         Patient patient = new Patient(
-            null, null, null
+            " ", null, null
         );
 
         // Act
@@ -50,8 +50,8 @@ public class PatientValidationTest {
         // Assert
         assertEquals(1, violations.size());
         ConstraintViolation<Patient> violation = violations.iterator().next();
-        assertEquals("User ID is required", violation.getMessage());
-        assertEquals("userId", violation.getPropertyPath().toString());
+        assertEquals("Keycloak ID is required", violation.getMessage());
+        assertEquals("keycloakId", violation.getPropertyPath().toString());
     }
 
     @Test
