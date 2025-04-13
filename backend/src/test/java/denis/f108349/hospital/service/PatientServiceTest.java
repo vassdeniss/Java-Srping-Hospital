@@ -3,11 +3,13 @@ package denis.f108349.hospital.service;
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.service.impl.PatientServiceImpl;
+import net.bytebuddy.agent.builder.AgentBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -82,5 +84,24 @@ public class PatientServiceTest {
                 .verify();
         
         verify(this.patientRepository, times(1)).findByKeycloakId(id);
+    }
+    
+    @Test
+    void getAllPatients_ShouldReturnAllPatients() {
+        // Arrange
+        Patient patient = new Patient(UUID.randomUUID().toString(), null, null);
+        Patient patient2 = new Patient(UUID.randomUUID().toString(), null, null);
+        
+        when(this.patientRepository.findAll()).thenReturn(Flux.just(patient, patient2));
+        
+        // Act
+        Flux<Patient> result = this.patientService.getAllPatients();
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextCount(2)
+                .verifyComplete();
+        
+        verify(this.patientRepository, times(1)).findAll();
     }
 }

@@ -5,6 +5,7 @@ import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -21,5 +22,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Mono<Patient> getPatientByKeycloakId(String id) {
         return this.patientRepository.findByKeycloakId(id);
+    }
+
+    @Override
+    public Flux<Patient> getAllPatients() {
+        return this.patientRepository.findAll();
     }
 }

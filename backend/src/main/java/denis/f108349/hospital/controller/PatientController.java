@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -56,4 +57,18 @@ public class PatientController {
                         .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found"))))
                 .switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")));
     }
+    
+    @Operation(
+        summary = "Get all patients",
+        description = "Retrieves all patients with their user details"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved patients list"),
+    })
+    @GetMapping("/all")
+    public Flux<PatientWithUser> getAllPatients() {
+        return patientService.getAllPatients()
+            .flatMap(patient -> userService.getUserById(patient.getKeycloakId())
+                .map(user -> new PatientWithUser(patient, user)));
+    } 
 }

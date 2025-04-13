@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -105,5 +106,33 @@ public class PatientControllerTest {
 
         verify(this.userService, times(1)).getUserById(any(String.class));
         verify(this.patientService, times(1)).getPatientByKeycloakId(any(String.class));
-    } 
+    }
+    
+    @Test
+    void getAllPatients_ShouldReturnAllPatients_WhenValidRequest() {
+        // Arrange
+        KeycloakUser mockUser = new KeycloakUser(
+                "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
+        KeycloakUser mockUser2 = new KeycloakUser(
+                "keycloakId2", "test2@email.com", "test2User", "First2", "Last2", "7501020019");
+        Patient mockPatient = new Patient("keycloakId", null, null);
+        mockPatient.setId(UUID.randomUUID().toString());
+        Patient mockPatient2 = new Patient("keycloakId2", null, null);
+        mockPatient2.setId(UUID.randomUUID().toString());
+        
+        when(this.userService.getUserById(mockPatient.getKeycloakId())).thenReturn(Mono.just(mockUser));
+        when(this.userService.getUserById(mockPatient2.getKeycloakId())).thenReturn(Mono.just(mockUser2));
+        when(this.patientService.getAllPatients()).thenReturn(Flux.just(mockPatient, mockPatient2));
+
+        // Act and Assert
+        this.webTestClient.get()
+                .uri("/api/patients/all")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(PatientWithUser.class);
+
+        verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
+        verify(this.userService, times(1)).getUserById(mockUser2.getKeycloakId());
+        verify(this.patientService, times(1)).getAllPatients();
+    }
 }
