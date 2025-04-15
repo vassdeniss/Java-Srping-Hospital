@@ -104,4 +104,22 @@ public class PatientServiceTest {
         
         verify(this.patientRepository, times(1)).findAll();
     }
+    
+    @Test
+    void deletePatientByKeycloakId_ShouldDeletePatient_WhenValidId() {
+        // Arrange
+        Patient patient = new Patient(UUID.randomUUID().toString(), null, null);
+        
+        when(this.patientRepository.deletePatientByKeycloakId(patient.getKeycloakId())).thenReturn(Mono.empty());
+        
+        // Act
+        Mono<Void> result = this.patientService.deletePatientByKeycloakId(patient.getKeycloakId());
+        
+        // Act
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+        
+        verify(this.patientRepository, times(1)).deletePatientByKeycloakId(patient.getKeycloakId());
+    }
 }

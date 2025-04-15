@@ -9,5 +9,7 @@ public interface PatientService {
     
     Mono<Patient> getPatientByKeycloakId(String id);
     
-    Flux<Patient> getAllPatients();     
+    Flux<Patient> getAllPatients();    
+    
+    Mono<Void> deletePatientByKeycloakId(String id);
 }

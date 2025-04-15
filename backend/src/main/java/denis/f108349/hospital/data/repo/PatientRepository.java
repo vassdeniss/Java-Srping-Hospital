@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface PatientRepository extends ReactiveCrudRepository<Patient, String> {
     Mono<Patient> findByKeycloakId(String id);
+    
+    Mono<Void> deletePatientByKeycloakId(String id);
 }

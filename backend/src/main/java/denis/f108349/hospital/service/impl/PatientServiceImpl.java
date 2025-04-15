@@ -28,4 +28,9 @@ public class PatientServiceImpl implements PatientService {
     public Flux<Patient> getAllPatients() {
         return this.patientRepository.findAll();
     }
+
+    @Override
+    public Mono<Void> deletePatientByKeycloakId(String id) {
+        return this.patientRepository.deletePatientByKeycloakId(id);
+    }
 }

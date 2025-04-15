@@ -135,4 +135,20 @@ public class PatientControllerTest {
         verify(this.userService, times(1)).getUserById(mockUser2.getKeycloakId());
         verify(this.patientService, times(1)).getAllPatients();
     }
+    
+    @Test
+    void deletePatientByKeycloakId_ShouldDeletePatient_WhenValidRequest() {
+        // Arrange
+        Patient mockPatient = new Patient("keycloakId", null, null);
+        
+        when(this.patientService.deletePatientByKeycloakId(mockPatient.getKeycloakId())).thenReturn(Mono.empty());
+
+        // Act and Assert
+        this.webTestClient.delete()
+                .uri("/api/patients/delete/" + mockPatient.getKeycloakId())
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(this.patientService, times(1)).deletePatientByKeycloakId(mockPatient.getKeycloakId());
+    }
 }

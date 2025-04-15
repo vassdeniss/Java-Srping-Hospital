@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,4 +72,17 @@ public class PatientController {
             .flatMap(patient -> userService.getUserById(patient.getKeycloakId())
                 .map(user -> new PatientWithUser(patient, user)));
     } 
+    
+    @Operation(
+        summary = "Delete a patient by Keycloak ID",
+        description = "Deletes the patient record associated with the provided Keycloak ID"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Patient successfully deleted"),
+    })
+    @DeleteMapping("/delete/{keycloakId}")
+    public Mono<ResponseEntity<Void>> deletePatientByKeycloakId(@PathVariable String keycloakId) {
+        return patientService.deletePatientByKeycloakId(keycloakId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
 }
