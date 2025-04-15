@@ -73,8 +73,9 @@ const Root = () => {
       <Outlet
         context={{
           isAuth: keycloak.authenticated,
-          id: keycloak.tokenParsed.sub,
+          id: keycloak.tokenParsed?.sub,
           redirectToLogin: handleLogin,
+          roles: keycloak.tokenParsed?.realm_access?.roles,
         }}
       />
       <Footer />
