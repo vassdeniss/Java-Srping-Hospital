@@ -35,6 +35,25 @@ export async function updateUserRoleToPatient(keycloakId) {
   );
 }
 
+export async function deleteUserFromKeycloak(keycloakId) {
+  const token = await getAdminToken();
+
+  const response = await fetch(
+    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Keycloak delete error: ${response.status} - ${errorText}`);
+  }
+}
+
 export async function getPatient(id) {
   const response = await fetch(`http://localhost:8080/api/patients/${id}`);
 
@@ -55,6 +74,22 @@ export async function getAllPatients() {
   }
 
   return response.json();
+}
+
+export async function deletePatient(id) {
+  const response = await fetch(
+    'http://localhost:8080/api/patients/delete/' + id,
+    {
+      method: 'DELETE',
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Backend error: ${response.status} - ${errorText}`);
+  }
+
+  return;
 }
 
 async function getAdminToken() {

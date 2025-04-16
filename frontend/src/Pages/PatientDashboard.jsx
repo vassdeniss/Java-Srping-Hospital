@@ -29,8 +29,6 @@ const PatientDashboard = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(patient);
-
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-title">Welcome, {patient.user.username}!</h1>

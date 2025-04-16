@@ -1,6 +1,10 @@
 import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getAllPatients } from '../api/userApi';
+import {
+  deletePatient,
+  deleteUserFromKeycloak,
+  getAllPatients,
+} from '../api/userApi';
 
 import './adminDashboard.css';
 
@@ -24,6 +28,24 @@ const AdminDashboard = () => {
 
     fetchData();
   }, [isAuth, roles]);
+
+  const handleDelete = async (patientId) => {
+    if (!window.confirm('Are you sure you want to delete this patient?')) {
+      return;
+    }
+
+    try {
+      await deletePatient(patientId);
+      await deleteUserFromKeycloak(patientId);
+      setPatients((prev) =>
+        prev.filter((patient) => patient.user.keycloakId !== patientId)
+      );
+      alert('Patient deleted successfully');
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Error deleting patient');
+    }
+  };
 
   // const handlePromote = async (patientId) => {
   //   try {
@@ -62,12 +84,20 @@ const AdminDashboard = () => {
                   <strong>Email:</strong> {patient.user.email}
                 </p>
               </div>
-              <button
-                className="promote-button"
-                onClick={() => handlePromote(patient.user.keycloakId)}
-              >
-                Promote to Doctor
-              </button>
+              <div className="button-group">
+                <button
+                  className="promote-button"
+                  onClick={() => handlePromote(patient.user.keycloakId)}
+                >
+                  Promote to Doctor
+                </button>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDelete(patient.user.keycloakId)}
+                >
+                  Delete Patient
+                </button>
+              </div>
             </div>
           ))}
         </div>
