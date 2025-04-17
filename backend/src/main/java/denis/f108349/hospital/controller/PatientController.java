@@ -68,8 +68,8 @@ public class PatientController {
     })
     @GetMapping("/all")
     public Flux<PatientWithUser> getAllPatients() {
-        return patientService.getAllPatients()
-            .flatMap(patient -> userService.getUserById(patient.getKeycloakId())
+        return this.patientService.getAllPatients()
+            .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
                 .map(user -> new PatientWithUser(patient, user)));
     } 
     
@@ -82,7 +82,7 @@ public class PatientController {
     })
     @DeleteMapping("/delete/{keycloakId}")
     public Mono<ResponseEntity<Void>> deletePatientByKeycloakId(@PathVariable String keycloakId) {
-        return patientService.deletePatientByKeycloakId(keycloakId)
+        return this.patientService.deletePatientByKeycloakId(keycloakId)
             .thenReturn(ResponseEntity.noContent().build());
     }
 }
