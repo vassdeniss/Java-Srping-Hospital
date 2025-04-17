@@ -4,13 +4,19 @@ import {
   deletePatient,
   deleteUserFromKeycloak,
   getAllPatients,
+  getAllSpecialties,
 } from '../api/userApi';
 
 import './adminDashboard.css';
+import PromoteModal from '../components/PromoteModal';
 
 const AdminDashboard = () => {
   const { isAuth, redirectToLogin, roles } = useOutletContext();
   const [patients, setPatients] = useState([]);
+  const [showPromoteModal, setShowPromoteModal] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [specialties, setSpecialties] = useState([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +26,9 @@ const AdminDashboard = () => {
 
       try {
         const data = await getAllPatients();
+        const specialties = await getAllSpecialties();
         setPatients(data);
+        setSpecialties(specialties);
       } catch (error) {
         console.error('Error fetching patients:', error);
       }
@@ -47,18 +55,25 @@ const AdminDashboard = () => {
     }
   };
 
-  // const handlePromote = async (patientId) => {
-  //   try {
-  //     await promoteToDoctor(patientId);
-  //     setPatients((prev) =>
-  //       prev.filter((patient) => patient.user.id !== patientId)
-  //     );
-  //     alert('Patient promoted to doctor successfully');
-  //   } catch (error) {
-  //     console.error('Promotion error:', error);
-  //     alert('Error promoting patient');
-  //   }
-  // };
+  const handlePromote = async () => {
+    if (selectedSpecialties.length === 0) {
+      alert('Please select at least one specialty');
+      return;
+    }
+
+    try {
+      //await promoteToDoctor(selectedPatientId, selectedSpecialties);
+      //setPatients((prev) =>
+      //  prev.filter((patient) => patient.user.keycloakId !== selectedPatientId)
+      //);
+      alert('Patient promoted to doctor with specialties successfully');
+      setShowPromoteModal(false);
+      setSelectedSpecialties([]);
+    } catch (error) {
+      console.error('Promotion error:', error);
+      alert('Error promoting patient');
+    }
+  };
 
   if (!patients) {
     return <div>Loading...</div>;
@@ -87,7 +102,10 @@ const AdminDashboard = () => {
               <div className="button-group">
                 <button
                   className="promote-button"
-                  onClick={() => handlePromote(patient.user.keycloakId)}
+                  onClick={() => {
+                    setSelectedPatientId(patient.user.keycloakId);
+                    setShowPromoteModal(true);
+                  }}
                 >
                   Promote to Doctor
                 </button>
@@ -102,6 +120,14 @@ const AdminDashboard = () => {
           ))}
         </div>
       </div>
+      <PromoteModal
+        show={showPromoteModal}
+        onClose={() => setShowPromoteModal(false)}
+        specialties={specialties}
+        selectedSpecialties={selectedSpecialties}
+        onSpecialtyChange={setSelectedSpecialties}
+        onPromote={handlePromote}
+      />
     </div>
   );
 };

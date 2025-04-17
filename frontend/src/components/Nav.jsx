@@ -1,12 +1,17 @@
+import { useKeycloak } from '@react-keycloak/web';
+import { useNavigate } from 'react-router-dom';
+
 import './Nav.css';
 
-const Nav = ({
-  onRegisterClick,
-  onLoginClick,
-  onLogoutClick,
-  onProfileClick,
-  isAuthenticated,
-}) => {
+const Nav = () => {
+  const navigate = useNavigate();
+  const { keycloak } = useKeycloak();
+  const roles = keycloak.tokenParsed?.realm_access?.roles || [];
+
+  function handleAdmin() {
+    navigate('/admin/dashboard');
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -14,21 +19,29 @@ const Nav = ({
           MedCare
         </a>
         <div className="nav-menu">
-          {isAuthenticated ? (
+          {keycloak.authenticated ? (
             <>
-              <button onClick={onProfileClick} className="nav-link">
+              {roles.includes('admin') && (
+                <button onClick={handleAdmin} className="nav-link">
+                  Admin Dashboard
+                </button>
+              )}
+              <button
+                onClick={() => keycloak.accountManagement()}
+                className="nav-link"
+              >
                 Profile
               </button>
-              <button onClick={onLogoutClick} className="nav-link">
+              <button onClick={() => keycloak.logout()} className="nav-link">
                 Logout
               </button>
             </>
           ) : (
             <>
-              <button onClick={onRegisterClick} className="nav-link">
+              <button onClick={() => keycloak.register()} className="nav-link">
                 Register
               </button>
-              <button onClick={onLoginClick} className="nav-link">
+              <button onClick={() => keycloak.login()} className="nav-link">
                 Login
               </button>
             </>

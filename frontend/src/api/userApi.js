@@ -92,6 +92,17 @@ export async function deletePatient(id) {
   return;
 }
 
+export async function getAllSpecialties() {
+  const response = await fetch('http://localhost:8080/api/specialties/all');
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Backend error: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+}
+
 async function getAdminToken() {
   const clientId = 'hospital-react-client';
   const adminUsername = import.meta.env.VITE_ADMIN_USERNAME;

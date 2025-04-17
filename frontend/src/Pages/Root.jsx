@@ -45,31 +45,13 @@ const Root = () => {
     return <div>Loading...</div>;
   }
 
-  function handleRegister() {
-    keycloak.register();
-  }
-
   function handleLogin() {
     keycloak.login();
   }
 
-  function handleLogout() {
-    keycloak.logout();
-  }
-
-  function handleProfile() {
-    keycloak.accountManagement();
-  }
-
   return (
     <>
-      <Nav
-        onRegisterClick={handleRegister}
-        onLoginClick={handleLogin}
-        onLogoutClick={handleLogout}
-        onProfileClick={handleProfile}
-        isAuthenticated={keycloak.authenticated}
-      />
+      <Nav />
       <Outlet
         context={{
           isAuth: keycloak.authenticated,
