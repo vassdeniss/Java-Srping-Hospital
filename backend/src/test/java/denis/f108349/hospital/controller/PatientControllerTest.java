@@ -6,8 +6,6 @@ import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.service.PatientService;
 import denis.f108349.hospital.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @WebFluxTest(PatientController.class)
-@ExtendWith(MockitoExtension.class)
 public class PatientControllerTest {
     @Autowired
     private WebTestClient webTestClient;

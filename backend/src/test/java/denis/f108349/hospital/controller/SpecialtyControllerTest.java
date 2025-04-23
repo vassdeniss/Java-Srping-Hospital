@@ -3,8 +3,6 @@ package denis.f108349.hospital.controller;
 import denis.f108349.hospital.data.model.Specialty;
 import denis.f108349.hospital.service.SpecialtyService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,7 +12,6 @@ import reactor.core.publisher.Flux;
 import static org.mockito.Mockito.*;
 
 @WebFluxTest(SpecialtyController.class)
-@ExtendWith(MockitoExtension.class)
 public class SpecialtyControllerTest {
     @Autowired
     private WebTestClient webTestClient;
