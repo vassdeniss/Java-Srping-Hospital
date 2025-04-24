@@ -1,106 +1,85 @@
 export async function createUserInBackend(data) {
-  const response = await fetch('http://localhost:8080/api/patients/create', {
+  return apiRequest('http://localhost:8080/api/patients/create', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
+    body: data,
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend error: ${response.status} - ${errorText}`);
-  }
-
-  return response.json();
 }
 
 export async function updateUserRoleToPatient(keycloakId) {
   const token = await getAdminToken();
-  await fetch(
+  return apiRequest(
     `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
     {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([
-        {
-          id: '024aa226-cb4d-46ad-86a6-199ddcf7b86a',
-          name: 'patient',
-        },
-      ]),
+      headers: { Authorization: `Bearer ${token}` },
+      body: [{ id: '024aa226-cb4d-46ad-86a6-199ddcf7b86a', name: 'patient' }],
+    }
+  );
+}
+
+export async function updateUserRoleToDoctor(keycloakId) {
+  const token = await getAdminToken();
+  // Remove patient role
+  await apiRequest(
+    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
+    {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+      body: [{ id: '024aa226-cb4d-46ad-86a6-199ddcf7b86a', name: 'patient' }],
+    }
+  );
+  // Add doctor role
+  await apiRequest(
+    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: [{ id: 'f5f6845a-d90d-4ed7-8252-97a8f50770f6', name: 'doctor' }],
     }
   );
 }
 
 export async function deleteUserFromKeycloak(keycloakId) {
   const token = await getAdminToken();
-
-  const response = await fetch(
+  return apiRequest(
     `http://localhost:8081/admin/realms/hospital/users/${keycloakId}`,
     {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     }
   );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Keycloak delete error: ${response.status} - ${errorText}`);
-  }
 }
 
 export async function getPatient(id) {
-  const response = await fetch(`http://localhost:8080/api/patients/${id}`);
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend error: ${response.status} - ${errorText}`);
-  }
-
-  return response.json();
+  return apiRequest(`http://localhost:8080/api/patients/${id}`);
 }
 
 export async function getAllPatients() {
-  const response = await fetch('http://localhost:8080/api/patients/all');
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend error: ${response.status} - ${errorText}`);
-  }
-
-  return response.json();
+  return apiRequest('http://localhost:8080/api/patients/all');
 }
 
 export async function deletePatient(id) {
-  const response = await fetch(
-    'http://localhost:8080/api/patients/delete/' + id,
-    {
-      method: 'DELETE',
-    }
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend error: ${response.status} - ${errorText}`);
-  }
-
-  return;
+  return apiRequest(`http://localhost:8080/api/patients/delete/${id}`, {
+    method: 'DELETE',
+  });
 }
 
 export async function getAllSpecialties() {
-  const response = await fetch('http://localhost:8080/api/specialties/all');
+  return apiRequest('http://localhost:8080/api/specialties/all');
+}
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend error: ${response.status} - ${errorText}`);
-  }
+export async function createDoctor(patientId) {
+  return apiRequest('http://localhost:8080/api/doctors/create', {
+    method: 'POST',
+    body: { id: patientId },
+  });
+}
 
-  return response.json();
+export async function assignToDoctor(doctorId, specialties) {
+  return apiRequest(`http://localhost:8080/api/doctors/assign/${doctorId}`, {
+    method: 'POST',
+    body: specialties,
+  });
 }
 
 async function getAdminToken() {
@@ -124,4 +103,31 @@ async function getAdminToken() {
 
   const data = await response.json();
   return data.access_token;
+}
+
+async function apiRequest(
+  url,
+  { method = 'GET', body = null, headers = {} } = {}
+) {
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+    ...headers,
+  };
+
+  const options = {
+    method,
+    headers: defaultHeaders,
+    ...(body && { body: JSON.stringify(body) }),
+  };
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error: ${response.status} - ${errorText}`);
+  }
+
+  if (response.status !== 204) {
+    return response.json();
+  }
 }

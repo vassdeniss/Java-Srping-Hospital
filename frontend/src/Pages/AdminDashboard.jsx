@@ -1,10 +1,13 @@
 import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
+  assignToDoctor,
+  createDoctor,
   deletePatient,
   deleteUserFromKeycloak,
   getAllPatients,
   getAllSpecialties,
+  updateUserRoleToDoctor,
 } from '../api/userApi';
 
 import './adminDashboard.css';
@@ -16,7 +19,7 @@ const AdminDashboard = () => {
   const [showPromoteModal, setShowPromoteModal] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [specialties, setSpecialties] = useState([]);
-  const [selectedSpecialties, setSelectedSpecialties] = useState('');
+  const [selectedSpecialties, setSelectedSpecialties] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,10 +65,13 @@ const AdminDashboard = () => {
     }
 
     try {
-      //await promoteToDoctor(selectedPatientId, selectedSpecialties);
-      //setPatients((prev) =>
-      //  prev.filter((patient) => patient.user.keycloakId !== selectedPatientId)
-      //);
+      await updateUserRoleToDoctor(selectedPatientId);
+      await deletePatient(selectedPatientId);
+      await createDoctor(selectedPatientId);
+      await assignToDoctor(selectedPatientId, selectedSpecialties);
+      setPatients((prev) =>
+        prev.filter((patient) => patient.user.keycloakId !== selectedPatientId)
+      );
       alert('Patient promoted to doctor with specialties successfully');
       setShowPromoteModal(false);
       setSelectedSpecialties([]);
