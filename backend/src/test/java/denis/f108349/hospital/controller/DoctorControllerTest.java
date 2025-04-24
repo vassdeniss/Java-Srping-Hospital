@@ -2,9 +2,11 @@ package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.dto.DoctorRequest;
+import denis.f108349.hospital.dto.KeycloakUser;
+import denis.f108349.hospital.dto.PatientWithUser;
 import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.DoctorSpecialtyService;
-import denis.f108349.hospital.service.PatientService;
+import denis.f108349.hospital.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -29,18 +32,18 @@ public class DoctorControllerTest {
     private DoctorSpecialtyService doctorSpecialtyService;
     
     @MockBean
+    private UserService userService;
+    
+    @MockBean
     private DoctorService doctorService;
 
     @Test
-    void createDoctor_ShouldReturnOk_WhenValidRequest() {
+    void createDoctor_ShouldReturnCreated_WhenValidRequest() {
         // Arrange
         UUID uuid = UUID.randomUUID();
         Doctor mockDoctor = new Doctor(uuid.toString(), false);
-        DoctorRequest mockDoctorRequest = new DoctorRequest();
-        mockDoctorRequest.setId(uuid.toString());
-        mockDoctorRequest.setSpecialityIds(List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+        DoctorRequest mockDoctorRequest = new DoctorRequest(uuid.toString(), List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
 
-        when(this.doctorSpecialtyService.createDoctorSpecialty(anyString(), anyString())).thenReturn(Mono.empty());
         when(this.doctorService.createDoctor(anyString())).thenReturn(Mono.just(mockDoctor));
 
         // Act and Assert
@@ -48,11 +51,10 @@ public class DoctorControllerTest {
                 .uri("/api/doctors/create")
                 .body(BodyInserters.fromValue(mockDoctorRequest))
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody(Doctor.class)
                 .isEqualTo(mockDoctor);
 
-        //verify(this.doctorSpecialtyService, times(2)).createDoctorSpecialty(anyString(), anyString());
         verify(this.doctorService, times(1)).createDoctor(anyString());
     }
 
@@ -67,6 +69,34 @@ public class DoctorControllerTest {
                 .bodyValue(invalid)
                 .exchange()
                 .expectStatus().isBadRequest();
+    }
+    
+    @Test
+    void getAllDoctors_ShouldReturnOk_WhenValidRequest() {
+        // Arrange
+        KeycloakUser mockUser = new KeycloakUser(
+                "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
+        KeycloakUser mockUser2 = new KeycloakUser(
+                "keycloakId2", "test2@email.com", "test2User", "First2", "Last2", "7501020019");
+        Doctor mockDoctor = new Doctor("keycloakId", false);
+        mockDoctor.setId(UUID.randomUUID().toString());
+        Doctor mockDoctor2 = new Doctor("keycloakId2", false);
+        mockDoctor2.setId(UUID.randomUUID().toString());
+        
+        when(this.userService.getUserById(mockDoctor.getKeycloakId())).thenReturn(Mono.just(mockUser));
+        when(this.userService.getUserById(mockDoctor2.getKeycloakId())).thenReturn(Mono.just(mockUser2));
+        when(this.doctorService.getAllDoctors()).thenReturn(Flux.just(mockDoctor, mockDoctor2));
+
+        // Act and Assert
+        this.webTestClient.get()
+                .uri("/api/doctors/all")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(PatientWithUser.class);
+
+        verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
+        verify(this.userService, times(1)).getUserById(mockUser2.getKeycloakId());
+        verify(this.doctorService, times(1)).getAllDoctors();
     }
     
     @Test

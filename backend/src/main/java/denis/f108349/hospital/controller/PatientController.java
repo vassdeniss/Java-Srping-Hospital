@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/patients")
 @RequiredArgsConstructor
@@ -32,13 +34,16 @@ public class PatientController {
         description = "Registers a new patient with a specified keycloak ID."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Patient created successfully",
+        @ApiResponse(responseCode = "201", description = "Patient created successfully",
                      content = @Content(schema = @Schema(implementation = Patient.class))),
         @ApiResponse(responseCode = "400", description = "Validation errors")
     })
     @PostMapping("/create")
-    public Mono<Patient> createPatient(@Valid @RequestBody PatientRequest request) {
-        return this.patientService.createPatient(request.getId());
+    public Mono<ResponseEntity<Patient>> createPatient(@Valid @RequestBody PatientRequest request) {
+        return this.patientService.createPatient(request.getId())
+                .map(patient -> ResponseEntity
+                        .created(URI.create("/api/patients/" + patient.getKeycloakId()))
+                        .body(patient));
     }
     
     @Operation(

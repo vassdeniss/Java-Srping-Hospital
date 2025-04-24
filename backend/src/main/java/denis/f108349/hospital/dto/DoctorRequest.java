@@ -1,13 +1,13 @@
 package denis.f108349.hospital.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.validator.constraints.UUID;
 
 import java.util.List;
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class DoctorRequest {
     @UUID
     private String id;

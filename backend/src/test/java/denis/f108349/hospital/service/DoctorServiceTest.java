@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -63,6 +64,25 @@ public class DoctorServiceTest {
                 .verify();
         
         verify(this.doctorRepository, times(1)).findByKeycloakId(id);
+    }
+    
+    @Test
+    void getAllDoctors_ShouldReturnAllDoctors() {
+        // Arrange
+        Doctor doctor = new Doctor(UUID.randomUUID().toString(), false);
+        Doctor doctor2 = new Doctor(UUID.randomUUID().toString(), false);
+        
+        when(this.doctorRepository.findAll()).thenReturn(Flux.just(doctor, doctor2));
+        
+        // Act
+        Flux<Doctor> result = this.doctorService.getAllDoctors();
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextCount(2)
+                .verifyComplete();
+        
+        verify(this.doctorRepository, times(1)).findAll();
     }
     
     @Test

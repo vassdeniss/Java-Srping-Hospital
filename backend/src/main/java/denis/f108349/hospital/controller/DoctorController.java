@@ -3,9 +3,11 @@ package denis.f108349.hospital.controller;
 import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.dto.DoctorRequest;
+import denis.f108349.hospital.dto.DoctorWithUser;
 import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.DoctorSpecialtyService;
+import denis.f108349.hospital.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -28,20 +31,38 @@ import java.util.List;
 public class DoctorController {
     private final DoctorService doctorService;
     private final DoctorSpecialtyService doctorSpecialtyService;
+    private final UserService userService;
 
     @Operation(
         summary = "Create a new doctor",
         description = "Registers a new doctor with a specified keycloak ID."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Doctor created successfully",
-                     content = @Content(schema = @Schema(implementation = Patient.class))),
+        @ApiResponse(responseCode = "201", description = "Doctor created successfully",
+                     content = @Content(schema = @Schema(implementation = Doctor.class))),
         @ApiResponse(responseCode = "400", description = "Validation errors")
     })
     @PostMapping("/create")
-    public Mono<Doctor> createDoctor(@Valid @RequestBody DoctorRequest request) {
-        return this.doctorService.createDoctor(request.getId());
+    public Mono<ResponseEntity<Doctor>> createDoctor(@Valid @RequestBody DoctorRequest request) {
+        return this.doctorService.createDoctor(request.getId())
+                .map(doctor -> ResponseEntity
+                        .created(URI.create("/api/doctors/" + doctor.getKeycloakId()))
+                        .body(doctor));
     }
+    
+    @Operation(
+        summary = "Get all doctors",
+        description = "Retrieves all doctors with their user details"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved doctors list"),
+    })
+    @GetMapping("/all")
+    public Flux<DoctorWithUser> getAllPatients() {
+        return this.doctorService.getAllDoctors()
+            .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId())
+                .map(user -> new DoctorWithUser(doctor, user)));
+    } 
     
     @Operation(
         summary = "Assign specialties to a doctor",

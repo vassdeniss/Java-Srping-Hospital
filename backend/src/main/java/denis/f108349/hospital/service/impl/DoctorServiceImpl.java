@@ -5,12 +5,18 @@ import denis.f108349.hospital.data.repo.DoctorRepository;
 import denis.f108349.hospital.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
+
+    @Override
+    public Flux<Doctor> getAllDoctors() {
+        return this.doctorRepository.findAll();
+    }
 
     @Override
     public Mono<Doctor> getDoctorByKeycloakId(String id) {

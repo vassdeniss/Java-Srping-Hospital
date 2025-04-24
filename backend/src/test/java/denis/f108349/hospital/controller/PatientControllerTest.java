@@ -1,6 +1,7 @@
 package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.dto.KeycloakUser;
+import denis.f108349.hospital.dto.PatientRequest;
 import denis.f108349.hospital.dto.PatientWithUser;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.service.PatientService;
@@ -31,10 +32,11 @@ public class PatientControllerTest {
     private PatientService patientService;
 
     @Test
-    void createPatient_ShouldReturnPatient_WhenValidRequest() {
+    void createPatient_ShouldReturnCreated_WhenValidRequest() {
         // Arrange
         UUID uuid = UUID.randomUUID();
         Patient mockPatient = new Patient(uuid.toString(), null, null);
+        PatientRequest mockRequest = new PatientRequest(uuid.toString());
 
         when(this.patientService.createPatient(uuid.toString())).thenReturn(Mono.just(mockPatient));
 
@@ -42,9 +44,9 @@ public class PatientControllerTest {
         this.webTestClient.post()
                 .uri("/api/patients/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(uuid)
+                .bodyValue(mockRequest)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody(Patient.class)
                 .isEqualTo(mockPatient);
 
@@ -52,7 +54,7 @@ public class PatientControllerTest {
     }  
 
     @Test
-    void createPatient_ShouldReturnValidationError_WhenInvalidRequest() {
+    void createPatient_ShouldReturnBadRequest_WhenInvalidRequest() {
         // Arrange
         String invalid = "aaaaaa";
 
@@ -65,7 +67,7 @@ public class PatientControllerTest {
     }
 
     @Test
-    void getPatientById_ShouldReturnPatient_WhenValidRequest() {
+    void getPatientById_ShouldReturnOk_WhenValidRequest() {
         // Arrange
         KeycloakUser mockUser = new KeycloakUser(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
@@ -106,7 +108,7 @@ public class PatientControllerTest {
     }
     
     @Test
-    void getAllPatients_ShouldReturnAllPatients_WhenValidRequest() {
+    void getAllPatients_ShouldReturnOk_WhenValidRequest() {
         // Arrange
         KeycloakUser mockUser = new KeycloakUser(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
@@ -134,7 +136,7 @@ public class PatientControllerTest {
     }
     
     @Test
-    void deletePatientByKeycloakId_ShouldDeletePatient_WhenValidRequest() {
+    void deletePatientByKeycloakId_ShouldReturnNoContent_WhenValidRequest() {
         // Arrange
         Patient mockPatient = new Patient("keycloakId", null, null);
         
