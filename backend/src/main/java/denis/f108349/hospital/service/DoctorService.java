@@ -5,9 +5,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface DoctorService {
-    Flux<Doctor> getAllDoctors();
+    Flux<Doctor> getAllDoctors(Boolean gp);
     
     Mono<Doctor> getDoctorByKeycloakId(String id);
+    
+    Mono<Doctor> getDoctorById(String id);
     
     Mono<Doctor> createDoctor(String userId);
 }

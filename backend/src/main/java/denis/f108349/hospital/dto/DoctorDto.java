@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DoctorWithUser {
+public class DoctorDto {
     private Doctor doctor;
     private KeycloakUser user;
 }

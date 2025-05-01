@@ -3,7 +3,7 @@ package denis.f108349.hospital.controller;
 import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.dto.DoctorRequest;
 import denis.f108349.hospital.dto.KeycloakUser;
-import denis.f108349.hospital.dto.PatientWithUser;
+import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.DoctorSpecialtyService;
 import denis.f108349.hospital.service.UserService;
@@ -85,18 +85,18 @@ public class DoctorControllerTest {
         
         when(this.userService.getUserById(mockDoctor.getKeycloakId())).thenReturn(Mono.just(mockUser));
         when(this.userService.getUserById(mockDoctor2.getKeycloakId())).thenReturn(Mono.just(mockUser2));
-        when(this.doctorService.getAllDoctors()).thenReturn(Flux.just(mockDoctor, mockDoctor2));
+        when(this.doctorService.getAllDoctors(null)).thenReturn(Flux.just(mockDoctor, mockDoctor2));
 
         // Act and Assert
         this.webTestClient.get()
                 .uri("/api/doctors/all")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(PatientWithUser.class);
+                .expectBodyList(PatientDto.class);
 
         verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
         verify(this.userService, times(1)).getUserById(mockUser2.getKeycloakId());
-        verify(this.doctorService, times(1)).getAllDoctors();
+        verify(this.doctorService, times(1)).getAllDoctors(null);
     }
     
     @Test

@@ -14,13 +14,22 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
 
     @Override
-    public Flux<Doctor> getAllDoctors() {
-        return this.doctorRepository.findAll();
+    public Flux<Doctor> getAllDoctors(Boolean gp) {
+        if (gp == null) {
+            return this.doctorRepository.findAll();
+        } else {
+            return this.doctorRepository.findAllByIsGpIs(gp);
+        }
     }
 
     @Override
     public Mono<Doctor> getDoctorByKeycloakId(String id) {
         return this.doctorRepository.findByKeycloakId(id);
+    }
+
+    @Override
+    public Mono<Doctor> getDoctorById(String id) {
+        return this.doctorRepository.findById(id);
     }
 
     @Override

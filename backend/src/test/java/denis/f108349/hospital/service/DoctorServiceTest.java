@@ -30,6 +30,43 @@ public class DoctorServiceTest {
     }
     
     @Test
+    void getAllDoctors_ShouldReturnAllDoctors_WhenGpFalse() {
+        // Arrange
+        Doctor doctor = new Doctor(UUID.randomUUID().toString(), true);
+        Doctor doctor2 = new Doctor(UUID.randomUUID().toString(), false);
+        
+        when(this.doctorRepository.findAll()).thenReturn(Flux.just(doctor, doctor2));
+        
+        // Act
+        Flux<Doctor> result = this.doctorService.getAllDoctors(null);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextCount(2)
+                .verifyComplete();
+        
+        verify(this.doctorRepository, times(1)).findAll();
+    }
+    
+    @Test
+    void getAllDoctors_ShouldReturnAllGpDoctors_WhenGpTrue() {
+        // Arrange
+        Doctor doctor = new Doctor(UUID.randomUUID().toString(), true);
+        
+        when(this.doctorRepository.findAllByIsGpIs(true)).thenReturn(Flux.just(doctor));
+        
+        // Act
+        Flux<Doctor> result = this.doctorService.getAllDoctors(true);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectNextCount(1)
+                .verifyComplete();
+        
+        verify(this.doctorRepository, times(1)).findAllByIsGpIs(true);
+    }
+    
+    @Test
     void getDoctorByKeycloakId_ShouldReturnDoctor_WhenValidId() {
         // Arrange
         String id = UUID.randomUUID().toString();
@@ -67,22 +104,41 @@ public class DoctorServiceTest {
     }
     
     @Test
-    void getAllDoctors_ShouldReturnAllDoctors() {
+    void getDoctorById_ShouldReturnDoctor_WhenValidId() {
         // Arrange
+        String id = UUID.randomUUID().toString();
         Doctor doctor = new Doctor(UUID.randomUUID().toString(), false);
-        Doctor doctor2 = new Doctor(UUID.randomUUID().toString(), false);
+        doctor.setId(id);
         
-        when(this.doctorRepository.findAll()).thenReturn(Flux.just(doctor, doctor2));
+        when(this.doctorRepository.findById(id)).thenReturn(Mono.just(doctor));
         
         // Act
-        Flux<Doctor> result = this.doctorService.getAllDoctors();
+        Mono<Doctor> result = this.doctorService.getDoctorById(id);
         
         // Act
         StepVerifier.create(result)
-                .expectNextCount(2)
+                .expectNextMatches(createdUser -> createdUser.getId().equals(id))
                 .verifyComplete();
         
-        verify(this.doctorRepository, times(1)).findAll();
+        verify(this.doctorRepository, times(1)).findById(id);
+    }
+    
+    @Test
+    void getDoctorById_ShouldReturnNull_WhenInvalidId() {
+        // Arrange
+        String id = UUID.randomUUID().toString();
+        
+        when(this.doctorRepository.findById(id)).thenReturn(Mono.empty());
+        
+        // Act
+        Mono<Doctor> result = this.doctorService.getDoctorById(id);
+        
+        // Act
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+        
+        verify(this.doctorRepository, times(1)).findById(id);
     }
     
     @Test

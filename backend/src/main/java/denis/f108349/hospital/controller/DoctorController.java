@@ -3,7 +3,7 @@ package denis.f108349.hospital.controller;
 import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.dto.DoctorRequest;
-import denis.f108349.hospital.dto.DoctorWithUser;
+import denis.f108349.hospital.dto.DoctorDto;
 import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.DoctorSpecialtyService;
@@ -58,10 +58,12 @@ public class DoctorController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved doctors list"),
     })
     @GetMapping("/all")
-    public Flux<DoctorWithUser> getAllPatients() {
-        return this.doctorService.getAllDoctors()
+    public Flux<DoctorDto> getAllDoctors(@RequestParam(value = "gp", required = false) String gpParam) {
+        Boolean gp = gpParam != null ? Boolean.parseBoolean(gpParam) : null;
+        
+        return this.doctorService.getAllDoctors(gp)
             .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId())
-                .map(user -> new DoctorWithUser(doctor, user)));
+                .map(user -> new DoctorDto(doctor, user)));
     } 
     
     @Operation(
