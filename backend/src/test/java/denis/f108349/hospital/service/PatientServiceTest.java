@@ -2,6 +2,7 @@ package denis.f108349.hospital.service;
 
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.impl.PatientServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class PatientServiceTest {
         // Act
         Mono<Patient> result = this.patientService.getPatientByKeycloakId(id);
         
-        // Act
+        // Assert
         StepVerifier.create(result)
                 .expectNextMatches(createdUser -> createdUser.getKeycloakId().equals(id))
                 .verifyComplete();
@@ -77,7 +78,7 @@ public class PatientServiceTest {
         // Act
         Mono<Patient> result = this.patientService.getPatientByKeycloakId(id);
         
-        // Act
+        // Assert
         StepVerifier.create(result)
                 .expectComplete()
                 .verify();
@@ -96,12 +97,58 @@ public class PatientServiceTest {
         // Act
         Flux<Patient> result = this.patientService.getAllPatients();
         
-        // Act
+        // Assert
         StepVerifier.create(result)
                 .expectNextCount(2)
                 .verifyComplete();
         
         verify(this.patientRepository, times(1)).findAll();
+    }
+    
+    @Test
+    void updatePatient_ShouldUpdatePatient_WhenExist() {
+        // Arrange
+        String keycloakId = UUID.randomUUID().toString();
+        Patient patient = new Patient(keycloakId, null, null);
+        patient.setId(UUID.randomUUID().toString());
+        String gpId = UUID.randomUUID().toString();
+        Patient newPatient = new Patient(keycloakId, gpId, null);
+        
+        when(this.patientRepository.findByKeycloakId(keycloakId)).thenReturn(Mono.just(patient));
+        when(patientRepository.save(any(Patient.class)))
+            .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
+        
+        // Act
+        Mono<Patient> result = this.patientService.updatePatient(keycloakId, newPatient);
+        
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(updatedPatient -> updatedPatient.getGpDoctorId().equals(gpId))
+                .verifyComplete();
+        
+        verify(this.patientRepository, times(1)).findByKeycloakId(keycloakId);
+        verify(this.patientRepository, times(1)).save(any(Patient.class));
+    }
+    
+    @Test
+    void updatePatient_ShouldReturnError_WhenPatientNotFound() {
+        // Arrange
+        String keycloakId = UUID.randomUUID().toString();
+        Patient newPatient = new Patient(keycloakId, UUID.randomUUID().toString(), null);
+    
+        when(this.patientRepository.findByKeycloakId(keycloakId)).thenReturn(Mono.empty());
+    
+        // Act
+        Mono<Patient> result = this.patientService.updatePatient(keycloakId, newPatient);
+    
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable -> throwable instanceof EntityNotFoundException
+                        && throwable.getMessage().equals("Patient not found"))
+                .verify();
+        
+        verify(this.patientRepository, times(1)).findByKeycloakId(keycloakId);
+        verify(this.patientRepository, times(0)).save(any(Patient.class));
     }
     
     @Test
@@ -114,7 +161,7 @@ public class PatientServiceTest {
         // Act
         Mono<Void> result = this.patientService.deletePatientByKeycloakId(patient.getKeycloakId());
         
-        // Act
+        // Assert
         StepVerifier.create(result)
                 .expectComplete()
                 .verify();

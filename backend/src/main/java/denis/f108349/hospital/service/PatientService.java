@@ -11,5 +11,7 @@ public interface PatientService {
     
     Flux<Patient> getAllPatients();    
     
+    Mono<Patient> updatePatient(String id, Patient patient);
+    
     Mono<Void> deletePatientByKeycloakId(String id);
 }

@@ -2,8 +2,9 @@ package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.dto.KeycloakUser;
 import denis.f108349.hospital.dto.PatientRequest;
-import denis.f108349.hospital.dto.PatientWithUser;
+import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.PatientService;
 import denis.f108349.hospital.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,6 +29,9 @@ public class PatientControllerTest {
 
     @MockBean
     private UserService userService;
+    
+    @MockitoBean
+    private DoctorService doctorService;
 
     @MockBean
     private PatientService patientService;
@@ -82,7 +87,7 @@ public class PatientControllerTest {
                 .uri("/api/patients/" + mockPatient.getKeycloakId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(PatientWithUser.class);
+                .expectBody(PatientDto.class);
 
         verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
         verify(this.patientService, times(1)).getPatientByKeycloakId(mockPatient.getKeycloakId());
@@ -128,7 +133,7 @@ public class PatientControllerTest {
                 .uri("/api/patients/all")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(PatientWithUser.class);
+                .expectBodyList(PatientDto.class);
 
         verify(this.userService, times(1)).getUserById(mockUser.getKeycloakId());
         verify(this.userService, times(1)).getUserById(mockUser2.getKeycloakId());

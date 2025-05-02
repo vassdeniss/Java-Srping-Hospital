@@ -1,9 +1,10 @@
 package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.dto.PatientRequest;
-import denis.f108349.hospital.dto.PatientWithUser;
+import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.exception.EntityNotFoundException;
+import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.PatientService;
 import denis.f108349.hospital.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 
+// TODO: fix postman endpoints
 @RestController
 @RequestMapping("/api/patients")
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ import java.net.URI;
 public class PatientController {
     private final UserService userService;
     private final PatientService patientService;
+    private final DoctorService doctorService;  
 
     @Operation(
         summary = "Create a new patient",
@@ -52,16 +55,22 @@ public class PatientController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Patient retrieved successfully",
-                     content = @Content(schema = @Schema(implementation = PatientWithUser.class))),
+                     content = @Content(schema = @Schema(implementation = PatientDto.class))),
         @ApiResponse(responseCode = "404", description = "Patient or User not found")
     })
     @GetMapping("/{id}")
-    public Mono<PatientWithUser> getPatientById(@PathVariable String id) {
+    public Mono<PatientDto> getPatientById(@PathVariable String id) {
         return this.patientService.getPatientByKeycloakId(id)
-                .flatMap(patient -> this.userService.getUserById(id)
-                        .flatMap(user -> Mono.just(new PatientWithUser(patient, user)))
-                        .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found"))))
-                .switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")));
+            .switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")))
+            .flatMap(patient -> this.userService.getUserById(id)
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found")))
+                .flatMap(patientUser -> Mono.justOrEmpty(patient.getGpDoctorId())
+                    .flatMap(this.doctorService::getDoctorById)
+                    .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId()))
+                    .flatMap(doctorUser -> Mono.just(new PatientDto(patient, patientUser, doctorUser)))
+                    .defaultIfEmpty(new PatientDto(patient, patientUser, null))
+                )
+            );
     }
     
     @Operation(
@@ -72,11 +81,35 @@ public class PatientController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved patients list"),
     })
     @GetMapping("/all")
-    public Flux<PatientWithUser> getAllPatients() {
+    public Flux<PatientDto> getAllPatients() {
         return this.patientService.getAllPatients()
             .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
-                .map(user -> new PatientWithUser(patient, user)));
+                .flatMap(user -> Mono.justOrEmpty(patient.getGpDoctorId())
+                    .flatMap(this.userService::getUserById)
+                    .map(doctor -> new PatientDto(patient, user, doctor))
+                    .defaultIfEmpty(new PatientDto(patient, user, null))
+                )
+            );
+
     } 
+    
+    // TODO: unit test
+    @Operation(
+        summary = "Changes a patient's GP",
+        description = "Updates a patients own GP by their Keycloak ID."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient updated successfully",
+                     content = @Content(schema = @Schema(implementation = PatientDto.class))),
+        @ApiResponse(responseCode = "404", description = "Patient not found")
+    })
+    @PatchMapping("/{keycloakId}")
+    public Mono<Patient> patchPatient(
+        @PathVariable String keycloakId,
+        @Valid @RequestBody Patient patient
+    ) {
+        return patientService.updatePatient(keycloakId, patient);
+    }
     
     @Operation(
         summary = "Delete a patient by Keycloak ID",

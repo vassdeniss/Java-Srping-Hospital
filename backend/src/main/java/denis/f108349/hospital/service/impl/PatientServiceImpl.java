@@ -2,6 +2,7 @@ package denis.f108349.hospital.service.impl;
 
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,16 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Flux<Patient> getAllPatients() {
         return this.patientRepository.findAll();
+    }
+
+    @Override
+    public Mono<Patient> updatePatient(String id, Patient patient) {
+        return this.patientRepository.findByKeycloakId(id)
+                .flatMap(patient1 -> {
+                    patient1.setGpDoctorId(patient.getGpDoctorId());
+                    Mono<Patient> test = this.patientRepository.save(patient1);
+                    return test;
+                }).switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")));
     }
 
     @Override
