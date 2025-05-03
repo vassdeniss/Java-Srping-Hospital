@@ -84,13 +84,8 @@ public class PatientController {
     public Flux<PatientDto> getAllPatients() {
         return this.patientService.getAllPatients()
             .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
-                .flatMap(user -> Mono.justOrEmpty(patient.getGpDoctorId())
-                    .flatMap(this.userService::getUserById)
-                    .map(doctor -> new PatientDto(patient, user, doctor))
-                    .defaultIfEmpty(new PatientDto(patient, user, null))
-                )
+                .flatMap(patientUser -> Mono.just(new PatientDto(patient, patientUser, null)))
             );
-
     } 
     
     // TODO: unit test
@@ -99,16 +94,17 @@ public class PatientController {
         description = "Updates a patients own GP by their Keycloak ID."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Patient updated successfully",
+        @ApiResponse(responseCode = "204", description = "Patient updated successfully",
                      content = @Content(schema = @Schema(implementation = PatientDto.class))),
         @ApiResponse(responseCode = "404", description = "Patient not found")
     })
     @PatchMapping("/{keycloakId}")
-    public Mono<Patient> patchPatient(
+    public Mono<ResponseEntity<Void>> patchPatient(
         @PathVariable String keycloakId,
         @Valid @RequestBody Patient patient
     ) {
-        return patientService.updatePatient(keycloakId, patient);
+        return patientService.updatePatient(keycloakId, patient)
+                .thenReturn(ResponseEntity.noContent().build());
     }
     
     @Operation(

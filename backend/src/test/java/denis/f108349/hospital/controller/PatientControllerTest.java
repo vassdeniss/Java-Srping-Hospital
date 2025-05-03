@@ -40,7 +40,7 @@ public class PatientControllerTest {
     void createPatient_ShouldReturnCreated_WhenValidRequest() {
         // Arrange
         UUID uuid = UUID.randomUUID();
-        Patient mockPatient = new Patient(uuid.toString(), null, null);
+        Patient mockPatient = new Patient(uuid.toString(), null, false);
         PatientRequest mockRequest = new PatientRequest(uuid.toString());
 
         when(this.patientService.createPatient(uuid.toString())).thenReturn(Mono.just(mockPatient));
@@ -76,7 +76,7 @@ public class PatientControllerTest {
         // Arrange
         KeycloakUser mockUser = new KeycloakUser(
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
-        Patient mockPatient = new Patient("keycloakId", null, null);
+        Patient mockPatient = new Patient("keycloakId", null, false);
         mockPatient.setId(UUID.randomUUID().toString());
 
         when(this.userService.getUserById(mockPatient.getKeycloakId())).thenReturn(Mono.just(mockUser));
@@ -96,7 +96,7 @@ public class PatientControllerTest {
     @Test
     void getPatientById_ShouldReturnNotFound_WhenInvalidRequest() {
         // Arrange
-        Patient mockPatient = new Patient(UUID.randomUUID().toString(), null, null);
+        Patient mockPatient = new Patient(UUID.randomUUID().toString(), null, false);
         mockPatient.setId(UUID.randomUUID().toString());
 
         when(this.userService.getUserById(any(String.class))).thenReturn(Mono.empty());
@@ -119,9 +119,9 @@ public class PatientControllerTest {
                 "keycloakId", "test@email.com", "testUser", "First", "Last", "7501020018");
         KeycloakUser mockUser2 = new KeycloakUser(
                 "keycloakId2", "test2@email.com", "test2User", "First2", "Last2", "7501020019");
-        Patient mockPatient = new Patient("keycloakId", null, null);
+        Patient mockPatient = new Patient("keycloakId", null, false);
         mockPatient.setId(UUID.randomUUID().toString());
-        Patient mockPatient2 = new Patient("keycloakId2", null, null);
+        Patient mockPatient2 = new Patient("keycloakId2", null, false);
         mockPatient2.setId(UUID.randomUUID().toString());
         
         when(this.userService.getUserById(mockPatient.getKeycloakId())).thenReturn(Mono.just(mockUser));
@@ -143,7 +143,7 @@ public class PatientControllerTest {
     @Test
     void deletePatientByKeycloakId_ShouldReturnNoContent_WhenValidRequest() {
         // Arrange
-        Patient mockPatient = new Patient("keycloakId", null, null);
+        Patient mockPatient = new Patient("keycloakId", null, false);
         
         when(this.patientService.deletePatientByKeycloakId(mockPatient.getKeycloakId())).thenReturn(Mono.empty());
 

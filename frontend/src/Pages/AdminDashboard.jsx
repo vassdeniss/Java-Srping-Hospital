@@ -2,7 +2,11 @@ import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { deleteUserFromKeycloak, updateUserRoleToDoctor } from '../api/userApi';
 import { createDoctor, assignToDoctor, getAllDoctors } from '../api/doctorApi';
-import { getAllPatients, deletePatient } from '../api/patientApi';
+import {
+  getAllPatients,
+  deletePatient,
+  updatePatient,
+} from '../api/patientApi';
 import { getAllSpecialties } from '../api/specialtyApi';
 
 import './adminDashboard.css';
@@ -76,6 +80,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleToggleStatus = async (patientId, gpId, healthInsurance) => {
+    try {
+      await updatePatient(patientId, gpId, healthInsurance);
+      alert('Status updated successfully');
+    } catch (error) {
+      console.error('Toggle error:', error);
+      alert('Error updating status');
+    }
+  };
+
   if (!patients && !doctors && !specialties) {
     return <div>Loading...</div>;
   }
@@ -103,6 +117,20 @@ const AdminDashboard = () => {
                 </p>
               </div>
               <div className="button-group">
+                <button
+                  className={`toggle-button ${
+                    patient.patient.healthInsurance ? 'active' : 'inactive'
+                  }`}
+                  onClick={() =>
+                    handleToggleStatus(
+                      patient.user.keycloakId,
+                      patient.patient.gpDoctorId,
+                      !patient.patient.healthInsurance
+                    )
+                  }
+                >
+                  Toggle Health Insurance
+                </button>
                 <button
                   className="promote-button"
                   onClick={() => {

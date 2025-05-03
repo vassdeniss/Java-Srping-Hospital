@@ -8,10 +8,10 @@ export async function getAllPatients() {
   return apiRequest('http://localhost:8080/api/patients/all');
 }
 
-export async function updatePatientGp(id, doctorId) {
+export async function updatePatient(id, doctorId, healthInsurance) {
   return apiRequest('http://localhost:8080/api/patients/' + id, {
     method: 'PATCH',
-    body: { keycloakId: id, gpDoctorId: doctorId },
+    body: { keycloakId: id, gpDoctorId: doctorId, healthInsurance },
   });
 }
 

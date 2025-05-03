@@ -34,7 +34,7 @@ public class PatientServiceTest {
     void createPatient_ShouldReturnPatient_WhenValidUserId() {
         // Arrange
         String userId = UUID.randomUUID().toString();
-        Patient patient = new Patient(userId, null, null);
+        Patient patient = new Patient(userId, null, false);
 
         when(this.patientRepository.save(any(Patient.class))).thenReturn(Mono.just(patient));
 
@@ -53,7 +53,7 @@ public class PatientServiceTest {
     void getPatientByKeycloakId_ShouldReturnPatient_WhenValidId() {
         // Arrange
         String id = UUID.randomUUID().toString();
-        Patient patient = new Patient(id, null, null);
+        Patient patient = new Patient(id, null, false);
         
         when(this.patientRepository.findByKeycloakId(id)).thenReturn(Mono.just(patient));
         
@@ -89,8 +89,8 @@ public class PatientServiceTest {
     @Test
     void getAllPatients_ShouldReturnAllPatients() {
         // Arrange
-        Patient patient = new Patient(UUID.randomUUID().toString(), null, null);
-        Patient patient2 = new Patient(UUID.randomUUID().toString(), null, null);
+        Patient patient = new Patient(UUID.randomUUID().toString(), null, false);
+        Patient patient2 = new Patient(UUID.randomUUID().toString(), null, false);
         
         when(this.patientRepository.findAll()).thenReturn(Flux.just(patient, patient2));
         
@@ -109,10 +109,10 @@ public class PatientServiceTest {
     void updatePatient_ShouldUpdatePatient_WhenExist() {
         // Arrange
         String keycloakId = UUID.randomUUID().toString();
-        Patient patient = new Patient(keycloakId, null, null);
+        Patient patient = new Patient(keycloakId, null, false);
         patient.setId(UUID.randomUUID().toString());
         String gpId = UUID.randomUUID().toString();
-        Patient newPatient = new Patient(keycloakId, gpId, null);
+        Patient newPatient = new Patient(keycloakId, gpId, false);
         
         when(this.patientRepository.findByKeycloakId(keycloakId)).thenReturn(Mono.just(patient));
         when(patientRepository.save(any(Patient.class)))
@@ -134,7 +134,7 @@ public class PatientServiceTest {
     void updatePatient_ShouldReturnError_WhenPatientNotFound() {
         // Arrange
         String keycloakId = UUID.randomUUID().toString();
-        Patient newPatient = new Patient(keycloakId, UUID.randomUUID().toString(), null);
+        Patient newPatient = new Patient(keycloakId, UUID.randomUUID().toString(), false);
     
         when(this.patientRepository.findByKeycloakId(keycloakId)).thenReturn(Mono.empty());
     
@@ -154,7 +154,7 @@ public class PatientServiceTest {
     @Test
     void deletePatientByKeycloakId_ShouldDeletePatient_WhenValidId() {
         // Arrange
-        Patient patient = new Patient(UUID.randomUUID().toString(), null, null);
+        Patient patient = new Patient(UUID.randomUUID().toString(), null, false);
         
         when(this.patientRepository.deletePatientByKeycloakId(patient.getKeycloakId())).thenReturn(Mono.empty());
         

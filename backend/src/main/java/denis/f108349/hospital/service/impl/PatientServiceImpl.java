@@ -16,7 +16,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Mono<Patient> createPatient(String userId) {
-        Patient patient = new Patient(userId, null, null);
+        Patient patient = new Patient(userId, null, false);
         return this.patientRepository.save(patient);
     }
 
@@ -35,8 +35,8 @@ public class PatientServiceImpl implements PatientService {
         return this.patientRepository.findByKeycloakId(id)
                 .flatMap(patient1 -> {
                     patient1.setGpDoctorId(patient.getGpDoctorId());
-                    Mono<Patient> test = this.patientRepository.save(patient1);
-                    return test;
+                    patient1.setHealthInsurance(patient.isHealthInsurance());
+                    return this.patientRepository.save(patient1);
                 }).switchIfEmpty(Mono.error(new EntityNotFoundException("Patient not found")));
     }
 

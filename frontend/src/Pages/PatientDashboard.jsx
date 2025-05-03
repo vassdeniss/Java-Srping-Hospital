@@ -40,8 +40,8 @@ const PatientDashboard = () => {
 
   const handleSelectDoctor = async (doctorId) => {
     try {
-      const updatedPatient = await updatePatientGp(id, doctorId);
-      setPatient(updatedPatient);
+      await updatePatient(id, doctorId, patient.patient.healthInsurance);
+      setPatient(await getPatient(id));
       setShowDoctorsList(false);
     } catch (error) {
       console.error('Failed to update doctor:', error);
@@ -66,7 +66,8 @@ const PatientDashboard = () => {
             <strong>EGN:</strong> {patient.user.egn}
           </p>
           <p>
-            <strong>Insurance Status:</strong> Paid
+            <strong>Insurance Status:</strong>{' '}
+            {patient.patient.healthInsurance ? 'Paid' : 'Not Paid'}
           </p>
           <p>
             <strong>Personal Doctor:</strong>

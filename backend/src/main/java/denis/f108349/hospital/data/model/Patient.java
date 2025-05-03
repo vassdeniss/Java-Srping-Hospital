@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,6 +17,5 @@ public class Patient extends BaseEntity {
 
     private String gpDoctorId;
 
-    @PastOrPresent(message = "Last payment date cannot be in the future")
-    private LocalDate lastPaymentDate;
+    private boolean isHealthInsurance;
 }
