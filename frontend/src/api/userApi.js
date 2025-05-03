@@ -1,3 +1,5 @@
+import apiRequest from './baseApi';
+
 export async function createUserInBackend(data) {
   return apiRequest('http://localhost:8080/api/patients/create', {
     method: 'POST',
@@ -50,38 +52,6 @@ export async function deleteUserFromKeycloak(keycloakId) {
   );
 }
 
-export async function getPatient(id) {
-  return apiRequest(`http://localhost:8080/api/patients/${id}`);
-}
-
-export async function getAllPatients() {
-  return apiRequest('http://localhost:8080/api/patients/all');
-}
-
-export async function deletePatient(id) {
-  return apiRequest(`http://localhost:8080/api/patients/delete/${id}`, {
-    method: 'DELETE',
-  });
-}
-
-export async function getAllSpecialties() {
-  return apiRequest('http://localhost:8080/api/specialties/all');
-}
-
-export async function createDoctor(patientId) {
-  return apiRequest('http://localhost:8080/api/doctors/create', {
-    method: 'POST',
-    body: { id: patientId },
-  });
-}
-
-export async function assignToDoctor(doctorId, specialties) {
-  return apiRequest(`http://localhost:8080/api/doctors/assign/${doctorId}`, {
-    method: 'POST',
-    body: specialties,
-  });
-}
-
 async function getAdminToken() {
   const clientId = 'hospital-react-client';
   const adminUsername = import.meta.env.VITE_ADMIN_USERNAME;
@@ -103,31 +73,4 @@ async function getAdminToken() {
 
   const data = await response.json();
   return data.access_token;
-}
-
-async function apiRequest(
-  url,
-  { method = 'GET', body = null, headers = {} } = {}
-) {
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-    ...headers,
-  };
-
-  const options = {
-    method,
-    headers: defaultHeaders,
-    ...(body && { body: JSON.stringify(body) }),
-  };
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Error: ${response.status} - ${errorText}`);
-  }
-
-  if (response.status !== 204) {
-    return response.json();
-  }
 }

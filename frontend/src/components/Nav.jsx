@@ -26,6 +26,14 @@ const Nav = () => {
                   Admin Dashboard
                 </button>
               )}
+              {roles.includes('patient') && (
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="nav-link"
+                >
+                  Dashboard
+                </button>
+              )}
               <button
                 onClick={() => keycloak.accountManagement()}
                 className="nav-link"

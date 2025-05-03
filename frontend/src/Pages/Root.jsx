@@ -6,6 +6,8 @@ import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import { useEffect } from 'react';
 
+import './Root.css';
+
 const Root = () => {
   const { keycloak, initialized } = useKeycloak();
 
@@ -50,18 +52,20 @@ const Root = () => {
   }
 
   return (
-    <>
+    <div className="root-container">
       <Nav />
-      <Outlet
-        context={{
-          isAuth: keycloak.authenticated,
-          id: keycloak.tokenParsed?.sub,
-          redirectToLogin: handleLogin,
-          roles: keycloak.tokenParsed?.realm_access?.roles,
-        }}
-      />
+      <main className="content-wrapper">
+        <Outlet
+          context={{
+            isAuth: keycloak.authenticated,
+            id: keycloak.tokenParsed?.sub,
+            redirectToLogin: handleLogin,
+            roles: keycloak.tokenParsed?.realm_access?.roles,
+          }}
+        />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

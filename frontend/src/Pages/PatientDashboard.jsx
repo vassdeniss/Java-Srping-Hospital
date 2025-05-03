@@ -1,12 +1,15 @@
 import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getPatient } from '../api/userApi';
 
 import './patientDashboard.css';
+import { getAllGps } from '../api/doctorApi';
+import { getPatient, updatePatientGp } from '../api/patientApi';
 
 const PatientDashboard = () => {
   const { isAuth, id, redirectToLogin } = useOutletContext();
   const [patient, setPatient] = useState(null);
+  const [showDoctorsList, setShowDoctorsList] = useState(false);
+  const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -22,8 +25,28 @@ const PatientDashboard = () => {
       }
     };
 
+    const fetchDoctors = async () => {
+      try {
+        const data = await getAllGps();
+        setDoctors(data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
     fetchPatientData();
+    fetchDoctors();
   }, []);
+
+  const handleSelectDoctor = async (doctorId) => {
+    try {
+      const updatedPatient = await updatePatientGp(id, doctorId);
+      setPatient(updatedPatient);
+      setShowDoctorsList(false);
+    } catch (error) {
+      console.error('Failed to update doctor:', error);
+    }
+  };
 
   if (!patient) {
     return <div>Loading...</div>;
@@ -46,11 +69,32 @@ const PatientDashboard = () => {
             <strong>Insurance Status:</strong> Paid
           </p>
           <p>
-            <strong>Personal Doctor:</strong> Dr. Smith
+            <strong>Personal Doctor:</strong>
+            {patient.doctor
+              ? ` Dr. ${patient.doctor.firstName} ${patient.doctor.lastName}`
+              : ' Not assigned'}
+            <button
+              className="change-doctor-btn"
+              onClick={() => setShowDoctorsList(!showDoctorsList)}
+            >
+              Change
+            </button>
           </p>
+          {showDoctorsList && (
+            <div className="doctors-list">
+              {doctors.map((doctor) => (
+                <div
+                  key={doctor.doctor.keycloakId}
+                  className="doctor-item"
+                  onClick={() => handleSelectDoctor(doctor.doctor.id)}
+                >
+                  Dr. {doctor.user.firstName} {doctor.user.lastName}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-
       <div className="dashboard-section">
         <h2 className="section-title">Upcoming Appointments</h2>
         <div className="appointment-list">
