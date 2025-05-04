@@ -8,7 +8,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(),
-                LocalDate.now().minusDays(1));
+                LocalDateTime.now().plusDays(1));
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -43,7 +43,7 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit("   ",
             UUID.randomUUID().toString(),
-            LocalDate.now());
+            LocalDateTime.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -60,7 +60,7 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             "   ",
-            LocalDate.now());
+            LocalDateTime.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -90,11 +90,11 @@ public class VisitValidationTest {
     }
 
     @Test
-    void visitDateValidation_WhenFutureDate_ShouldFailWithPastOrPresentViolation() {
+    void visitDateValidation_WhenPastDate_ShouldFailWithPastOrPresentViolation() {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            LocalDate.now().plusDays(1));
+            LocalDateTime.now().minusDays(1));
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -102,7 +102,7 @@ public class VisitValidationTest {
         // Assert
         assertEquals(1, violations.size());
         ConstraintViolation<Visit> violation = violations.iterator().next();
-        assertEquals("Visit date cannot be in the future", violation.getMessage());
+        assertEquals("Visit date cannot be in the past", violation.getMessage());
         assertEquals("visitDate", violation.getPropertyPath().toString());
     }
 
@@ -111,7 +111,7 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            LocalDate.now());
+            LocalDateTime.now());
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
