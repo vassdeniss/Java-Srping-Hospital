@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 public interface VisitService {
-    Flux<Visit> getAllByPatientId(String patientId);
+    Flux<Visit> getAllById(String id);
     
     Mono<Visit> createVisit(String patientId, String doctorId, LocalDateTime date);
 }

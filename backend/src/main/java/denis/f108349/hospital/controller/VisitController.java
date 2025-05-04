@@ -31,22 +31,13 @@ public class VisitController {
     private final DoctorService doctorService;
     private final UserService userService;
     
-    @Operation(summary = "Get all visits with doctor names")
+    @Operation(summary = "Get all visits for a patient- or doctor-id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved visits")
     })
-    @GetMapping("/all/{patientId}")
-    public Flux<VisitDto> getAllVisits(@PathVariable String patientId) {
-        return this.visitService.getAllByPatientId(patientId)
-            .flatMap(visit -> this.doctorService.getDoctorById(visit.getDoctorId())
-                .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId())
-                    .map(user -> new VisitDto(
-                        visit.getVisitDate(),
-                        user.getFirstName(),
-                        user.getLastName()
-                    ))
-                )
-            );
+    @GetMapping("/all/{id}")
+    public Flux<VisitDto> getAllVisits(@RequestParam(required = false) String id) {
+        return this.visitService.getAllById(id).flatMap(this::toVisitDto);
     }
     
     @Operation(
@@ -64,5 +55,16 @@ public class VisitController {
                 .map(visit -> ResponseEntity
                         .created(URI.create("/api/visits/" + visit.getId()))
                         .body(visit));
+    }
+    
+    private Mono<VisitDto> toVisitDto(Visit visit) {
+      return this.doctorService.getDoctorById(visit.getDoctorId())
+        .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId())
+          .map(user -> new VisitDto(
+            visit.getVisitDate(),
+            user.getFirstName(),
+            user.getLastName()
+          ))
+        );
     }
 }

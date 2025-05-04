@@ -5,5 +5,5 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 
 public interface VisitRepository extends ReactiveCrudRepository<Visit, String> {
-    Flux<Visit> findAllByPatientId(String patientId); 
+    Flux<Visit> findAllByPatientIdOrDoctorId(String patientId, String doctorId);
 }

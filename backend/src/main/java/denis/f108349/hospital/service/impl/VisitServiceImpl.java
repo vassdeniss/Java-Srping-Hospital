@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 // TODO: test
@@ -18,8 +17,8 @@ public class VisitServiceImpl implements VisitService {
     private final VisitRepository visitRepository;
 
     @Override
-    public Flux<Visit> getAllByPatientId(String patientId) {
-        return this.visitRepository.findAllByPatientId(patientId);
+    public Flux<Visit> getAllById(String id) {
+        return this.visitRepository.findAllByPatientIdOrDoctorId(id, id);
     }
 
     @Override
