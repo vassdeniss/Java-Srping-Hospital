@@ -3,16 +3,21 @@ import { useEffect, useState } from 'react';
 
 import './patientDashboard.css';
 import { getAllGps } from '../api/doctorApi';
-import { getPatient, updatePatientGp } from '../api/patientApi';
+import { getPatient, updatePatient } from '../api/patientApi';
+import { createVisit, getVisits } from '../api/visitApi';
 
 const PatientDashboard = () => {
   const { isAuth, id, redirectToLogin } = useOutletContext();
   const [patient, setPatient] = useState(null);
   const [showDoctorsList, setShowDoctorsList] = useState(false);
   const [doctors, setDoctors] = useState([]);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [selectedDoctorId, setSelectedDoctorId] = useState('');
+  const [selectedDateTime, setSelectedDateTime] = useState('');
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const fetchPatientData = async () => {
+    const fetchData = async () => {
       if (!isAuth) {
         return redirectToLogin();
       }
@@ -20,22 +25,14 @@ const PatientDashboard = () => {
       try {
         const data = await getPatient(id);
         setPatient(data);
+        setDoctors(await getAllGps());
+        setAppointments(await getVisits(data.patient.id));
       } catch (error) {
         console.error(error.message);
       }
     };
 
-    const fetchDoctors = async () => {
-      try {
-        const data = await getAllGps();
-        setDoctors(data);
-      } catch (error) {
-        console.error(error.message);
-      }
-    };
-
-    fetchPatientData();
-    fetchDoctors();
+    fetchData();
   }, []);
 
   const handleSelectDoctor = async (doctorId) => {
@@ -45,6 +42,17 @@ const PatientDashboard = () => {
       setShowDoctorsList(false);
     } catch (error) {
       console.error('Failed to update doctor:', error);
+    }
+  };
+
+  const handleBookAppointment = async (e) => {
+    e.preventDefault();
+    try {
+      await createVisit(patient.patient.id, selectedDoctorId, selectedDateTime);
+      setAppointments(await getVisits(patient.patient.id));
+      setShowAppointmentModal(false);
+    } catch (error) {
+      console.error('Failed to create appointment:', error);
     }
   };
 
@@ -97,22 +105,79 @@ const PatientDashboard = () => {
         </div>
       </div>
       <div className="dashboard-section">
-        <h2 className="section-title">Upcoming Appointments</h2>
+        <h2 className="section-title">
+          Upcoming Appointments
+          <button
+            className="book-appointment-btn"
+            onClick={() => setShowAppointmentModal(true)}
+          >
+            Book New Appointment
+          </button>
+        </h2>
         <div className="appointment-list">
-          <div className="appointment-card">
-            <p>
-              <strong>Doctor:</strong> Dr. Smith
-            </p>
-            <p>
-              <strong>Date:</strong> 10th April 2025
-            </p>
-            <p>
-              <strong>Time:</strong> 3:00 PM
-            </p>
-          </div>
+          {appointments.map((appointment, idx) => (
+            <div className="appointment-card" key={idx}>
+              <p>
+                <strong>Doctor:</strong> Dr. {appointment.doctorFirstName}{' '}
+                {appointment.doctorLastName}
+              </p>
+              <p>
+                <strong>Date:</strong>{' '}
+                {new Date(appointment.visitDate).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Time:</strong>{' '}
+                {new Date(appointment.visitDate).toLocaleTimeString()}
+              </p>
+            </div>
+          ))}
         </div>
+        {showAppointmentModal && (
+          <div className="modal-backdrop">
+            <div className="appointment-modal">
+              <h3>Book New Appointment</h3>
+              <form onSubmit={handleBookAppointment}>
+                <div className="form-group">
+                  <label>Select Doctor:</label>
+                  <select
+                    value={selectedDoctorId}
+                    onChange={(e) => setSelectedDoctorId(e.target.value)}
+                    required
+                  >
+                    <option value="">Choose a doctor</option>
+                    {doctors.map((doctor) => (
+                      <option key={doctor.doctor.id} value={doctor.doctor.id}>
+                        Dr. {doctor.user.firstName} {doctor.user.lastName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Select Date & Time:</label>
+                  <input
+                    type="datetime-local"
+                    value={selectedDateTime}
+                    onChange={(e) => setSelectedDateTime(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="modal-actions">
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowAppointmentModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="confirm-btn">
+                    Book Appointment
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
-
       <div className="dashboard-section">
         <h2 className="section-title">Medical History</h2>
         <div className="history-list">
