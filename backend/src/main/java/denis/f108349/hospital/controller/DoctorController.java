@@ -4,6 +4,7 @@ import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.dto.DoctorRequest;
 import denis.f108349.hospital.dto.DoctorDto;
+import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.DoctorSpecialtyService;
@@ -24,6 +25,8 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.List;
 
+// TODO: Test
+// TODO: postman
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
@@ -48,6 +51,25 @@ public class DoctorController {
                 .map(doctor -> ResponseEntity
                         .created(URI.create("/api/doctors/" + doctor.getKeycloakId()))
                         .body(doctor));
+    }
+    
+    @Operation(
+        summary = "Get doctor by keycloak ID",
+        description = "Retrieves the doctor details and associated user by the doctor ID."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Patient retrieved successfully",
+                     content = @Content(schema = @Schema(implementation = PatientDto.class))),
+        @ApiResponse(responseCode = "404", description = "Doctor or User not found")
+    })
+    @GetMapping("/{id}")
+    public Mono<DoctorDto> getDoctorById(@PathVariable String id) {
+        return this.doctorService.getDoctorByKeycloakId(id)
+            .switchIfEmpty(Mono.error(new EntityNotFoundException("Doctor not found")))
+            .flatMap(doctor -> this.userService.getUserById(id)
+                .switchIfEmpty(Mono.error(new EntityNotFoundException("User not found")))
+                .flatMap(user -> Mono.just(new DoctorDto(doctor, user)))
+            );
     }
     
     @Operation(

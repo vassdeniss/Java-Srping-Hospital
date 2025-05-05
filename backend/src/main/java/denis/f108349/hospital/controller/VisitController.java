@@ -36,7 +36,7 @@ public class VisitController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved visits")
     })
     @GetMapping("/all/{id}")
-    public Flux<VisitDto> getAllVisits(@RequestParam(required = false) String id) {
+    public Flux<VisitDto> getAllVisits(@PathVariable String id) {
         return this.visitService.getAllById(id).flatMap(this::toVisitDto);
     }
     
