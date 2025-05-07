@@ -2,12 +2,14 @@ package denis.f108349.hospital.service.impl;
 
 import denis.f108349.hospital.data.model.Visit;
 import denis.f108349.hospital.data.repo.VisitRepository;
+import denis.f108349.hospital.data.projection.VisitProjection;
 import denis.f108349.hospital.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.xml.transform.Result;
 import java.time.LocalDateTime;
 
 // TODO: test
@@ -17,7 +19,7 @@ public class VisitServiceImpl implements VisitService {
     private final VisitRepository visitRepository;
 
     @Override
-    public Flux<Visit> getAllById(String id) {
+    public Flux<VisitProjection> getAllById(String id) {
         return this.visitRepository.findAllByPatientIdOrDoctorId(id, id);
     }
 

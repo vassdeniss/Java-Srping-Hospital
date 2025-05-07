@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class VisitDto {
+    private String id;
     private LocalDateTime visitDate;
     private String doctorFirstName;
     private String doctorLastName;
+    private String patientFirstName;
+    private String patientLastName;
 }

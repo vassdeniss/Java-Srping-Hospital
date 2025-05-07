@@ -2,8 +2,8 @@ package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.data.model.Visit;
 import denis.f108349.hospital.dto.VisitDto;
+import denis.f108349.hospital.data.projection.VisitProjection;
 import denis.f108349.hospital.dto.VisitRequest;
-import denis.f108349.hospital.service.DoctorService;
 import denis.f108349.hospital.service.UserService;
 import denis.f108349.hospital.service.VisitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,6 @@ import java.net.URI;
 @Tag(name = "Visits", description = "Endpoints for managing visits")
 public class VisitController {
     private final VisitService visitService;
-    private final DoctorService doctorService;
     private final UserService userService;
     
     @Operation(summary = "Get all visits for a patient- or doctor-id")
@@ -57,14 +56,17 @@ public class VisitController {
                         .body(visit));
     }
     
-    private Mono<VisitDto> toVisitDto(Visit visit) {
-      return this.doctorService.getDoctorById(visit.getDoctorId())
-        .flatMap(doctor -> this.userService.getUserById(doctor.getKeycloakId())
-          .map(user -> new VisitDto(
-            visit.getVisitDate(),
-            user.getFirstName(),
-            user.getLastName()
-          ))
-        );
+    private Mono<VisitDto> toVisitDto(VisitProjection visit) {
+      return this.userService.getUserById(visit.doctorId())
+              .flatMap(doctor -> this.userService.getUserById(visit.patientId())
+              .map(patient -> new VisitDto(
+                      visit.id(),
+                      visit.visitDate(),
+                      doctor.getFirstName(),
+                      doctor.getLastName(),
+                      patient.getFirstName(),
+                      patient.getLastName()
+              ))
+          );
     }
 }
