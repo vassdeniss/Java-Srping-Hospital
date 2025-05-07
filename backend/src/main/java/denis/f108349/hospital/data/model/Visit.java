@@ -26,4 +26,6 @@ public class Visit extends BaseEntity {
     @NotNull(message = "Visit date is required")
     @FutureOrPresent(message = "Visit date cannot be in the past")
     private LocalDateTime visitDate;
+    
+    private boolean isResolved;
 }

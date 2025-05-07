@@ -11,4 +11,6 @@ public interface VisitService {
     Flux<VisitProjection> getAllById(String id);
     
     Mono<Visit> createVisit(String patientId, String doctorId, LocalDateTime date);
+    
+    Mono<Visit> updateVisit(String id, boolean isResolved);
 }

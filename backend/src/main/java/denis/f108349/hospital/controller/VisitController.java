@@ -56,6 +56,23 @@ public class VisitController {
                         .body(visit));
     }
     
+    @Operation(
+        summary = "Updates a visit",
+        description = "Updates a visit by the ID."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Visit updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Visit not found")
+    })
+    @PatchMapping("/{id}")
+    public Mono<ResponseEntity<Void>> patchVisit(
+        @PathVariable String id,
+        @RequestBody boolean visit
+    ) {
+        return this.visitService.updateVisit(id, visit)
+                .thenReturn(ResponseEntity.noContent().build());
+    }
+    
     private Mono<VisitDto> toVisitDto(VisitProjection visit) {
       return this.userService.getUserById(visit.doctorId())
               .flatMap(doctor -> this.userService.getUserById(visit.patientId())

@@ -24,8 +24,8 @@ public class VisitJoinRepositoryImpl implements VisitJoinRepository {
             FROM Visit v
             JOIN Doctor d ON v.doctor_id = d.id
             JOIN Patient p ON v.patient_id = p.id
-            WHERE v.patient_id = :patientId
-               OR v.doctor_id = :doctorId
+            WHERE v.patient_id = :patientId AND v.is_resolved = false
+               OR v.doctor_id = :doctorId AND v.is_resolved = false
         """;
     
         return this.databaseClient.sql(sql)

@@ -29,7 +29,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(),
-                LocalDateTime.now().plusDays(1));
+                LocalDateTime.now().plusDays(1),
+                false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -43,7 +44,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit("   ",
             UUID.randomUUID().toString(),
-            LocalDateTime.now());
+            LocalDateTime.now(),
+            false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -60,7 +62,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             "   ",
-            LocalDateTime.now());
+            LocalDateTime.now(),
+            false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -77,7 +80,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(),
-                null);
+                null,
+                false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -94,7 +98,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            LocalDateTime.now().minusDays(1));
+            LocalDateTime.now().minusDays(1),
+            false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
@@ -111,7 +116,8 @@ public class VisitValidationTest {
         // Arrange
         Visit visit = new Visit(UUID.randomUUID().toString(),
             UUID.randomUUID().toString(),
-            LocalDateTime.now());
+            LocalDateTime.now(),
+            false);
 
         // Act
         Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
