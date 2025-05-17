@@ -21,7 +21,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
+// TODO: test
 // TODO: fix postman endpoints
 @RestController
 @RequestMapping("/api/patients")
@@ -90,12 +92,11 @@ public class PatientController {
     
     // TODO: unit test
     @Operation(
-        summary = "Changes a patient's GP",
-        description = "Updates a patients own GP by their Keycloak ID."
+        summary = "Updates a patient",
+        description = "Updates a patient by their Keycloak ID."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Patient updated successfully",
-                     content = @Content(schema = @Schema(implementation = PatientDto.class))),
+        @ApiResponse(responseCode = "204", description = "Patient updated successfully"),
         @ApiResponse(responseCode = "404", description = "Patient not found")
     })
     @PatchMapping("/{keycloakId}")
@@ -103,7 +104,7 @@ public class PatientController {
         @PathVariable String keycloakId,
         @Valid @RequestBody Patient patient
     ) {
-        return patientService.updatePatient(keycloakId, patient)
+        return this.patientService.updatePatient(keycloakId, patient)
                 .thenReturn(ResponseEntity.noContent().build());
     }
     
