@@ -1,5 +1,6 @@
 package denis.f108349.hospital.controller;
 
+import denis.f108349.hospital.data.projection.PatientHistoryProjection;
 import denis.f108349.hospital.dto.PatientRequest;
 import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.data.model.Patient;
@@ -119,5 +120,10 @@ public class PatientController {
     public Mono<ResponseEntity<Void>> deletePatientByKeycloakId(@PathVariable String keycloakId) {
         return this.patientService.deletePatientByKeycloakId(keycloakId)
             .thenReturn(ResponseEntity.noContent().build());
+    }
+    
+    @GetMapping("/{patientId}/history")
+    public Flux<PatientHistoryProjection> getPatientHistory(@PathVariable String patientId) {
+        return this.patientService.getPatientHistory(patientId);
     }
 }
