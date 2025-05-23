@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 
 import './patientDashboard.css';
 import { getAllGps } from '../api/doctorApi';
-import { getPatient, updatePatient } from '../api/patientApi';
+import {
+  getPatient,
+  getPatientHistory,
+  updatePatient,
+} from '../api/patientApi';
 import { createVisit, getVisits } from '../api/visitApi';
 
 const PatientDashboard = () => {
@@ -15,6 +19,7 @@ const PatientDashboard = () => {
   const [selectedDoctorId, setSelectedDoctorId] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
   const [appointments, setAppointments] = useState([]);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +32,7 @@ const PatientDashboard = () => {
         setPatient(data);
         setDoctors(await getAllGps());
         setAppointments(await getVisits(data.patient.id));
+        setHistory(await getPatientHistory(data.patient.id));
       } catch (error) {
         console.error(error.message);
       }
@@ -181,20 +187,41 @@ const PatientDashboard = () => {
       <div className="dashboard-section">
         <h2 className="section-title">Medical History</h2>
         <div className="history-list">
-          <div className="history-card">
-            <p>
-              <strong>Diagnosis:</strong> Common Cold
-            </p>
-            <p>
-              <strong>Treatment:</strong> Rest and hydration
-            </p>
-            <p>
-              <strong>Sick Leave:</strong> 5 days
-            </p>
-            <p>
-              <strong>Date:</strong> 1st March 2025
-            </p>
-          </div>
+          {history.map((entry, index) => (
+            <div className="history-card" key={index}>
+              <p>
+                <strong>Diagnosis:</strong> {entry.diagnosis}
+              </p>
+              <p>
+                <strong>Treatment:</strong> {entry.treatment}
+              </p>
+              {entry.dosage && (
+                <p>
+                  <strong>Dosage:</strong> {entry.dosage}
+                </p>
+              )}
+              {entry.frequency && (
+                <p>
+                  <strong>Frequency:</strong> {entry.frequency}
+                </p>
+              )}
+              {entry.duration && (
+                <p>
+                  <strong>Duration:</strong> {entry.duration}
+                </p>
+              )}
+              {entry.sickLeaveDays && (
+                <p>
+                  <strong>Sick Leave:</strong> {entry.sickLeaveDays} days
+                </p>
+              )}
+              <p>
+                <strong>Date:</strong>{' '}
+                {new Date(entry.visitDate).toLocaleDateString()}{' '}
+                {new Date(entry.visitDate).toLocaleTimeString()}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

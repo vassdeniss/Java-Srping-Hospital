@@ -4,6 +4,10 @@ export async function getPatient(id) {
   return apiRequest(`http://localhost:8080/api/patients/${id}`);
 }
 
+export async function getPatientHistory(id) {
+  return apiRequest(`http://localhost:8080/api/patients/${id}/history`);
+}
+
 export async function getAllPatients() {
   return apiRequest('http://localhost:8080/api/patients/all');
 }
