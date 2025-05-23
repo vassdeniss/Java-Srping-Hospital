@@ -6,6 +6,7 @@ import HomePage from './Pages/HomePage';
 import './App.css';
 import PatientDashboard from './Pages/PatientDashboard';
 import AdminDashboard from './Pages/AdminDashboard';
+import DoctorDashboard from './Pages/DoctorDashboard';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/admin/dashboard',
         element: <AdminDashboard />,
+      },
+      {
+        path: '/doctor/dashboard',
+        element: <DoctorDashboard />,
       },
     ],
   },

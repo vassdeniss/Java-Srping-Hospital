@@ -4,6 +4,10 @@ export async function getAllDoctors() {
   return apiRequest('http://localhost:8080/api/doctors/all');
 }
 
+export async function getDoctor(id) {
+  return apiRequest('http://localhost:8080/api/doctors/' + id);
+}
+
 export async function getAllGps() {
   return apiRequest('http://localhost:8080/api/doctors/all?gp=true');
 }
