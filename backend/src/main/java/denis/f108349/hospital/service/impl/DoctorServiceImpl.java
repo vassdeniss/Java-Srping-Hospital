@@ -1,6 +1,7 @@
 package denis.f108349.hospital.service.impl;
 
 import denis.f108349.hospital.data.model.Doctor;
+import denis.f108349.hospital.data.projection.HistoryProjection;
 import denis.f108349.hospital.data.repo.DoctorRepository;
 import denis.f108349.hospital.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Mono<Doctor> getDoctorById(String id) {
         return this.doctorRepository.findById(id);
+    }
+
+    @Override
+    public Flux<HistoryProjection> getDoctorHistory(String doctorId) {
+        return this.doctorRepository.findDoctorHistoryById(doctorId);
     }
 
     @Override

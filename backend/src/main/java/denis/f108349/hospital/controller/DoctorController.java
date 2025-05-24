@@ -2,6 +2,7 @@ package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.data.model.Doctor;
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.data.projection.HistoryProjection;
 import denis.f108349.hospital.dto.DoctorRequest;
 import denis.f108349.hospital.dto.DoctorDto;
 import denis.f108349.hospital.dto.PatientDto;
@@ -107,5 +108,23 @@ public class DoctorController {
                                 .then(Mono.empty())
                 )
                 .thenReturn(ResponseEntity.noContent().build());
+    }
+    
+    // TODO: api info
+    @GetMapping("/{doctorId}/history")
+    public Flux<HistoryProjection> getDoctorHistory(@PathVariable String doctorId) {
+        return this.doctorService.getDoctorHistory(doctorId)
+                .flatMap(history -> this.userService.getUserById(history.id())
+                        .flatMap(user -> Mono.just(new HistoryProjection(
+                                history.id(),
+                                user.getFirstName() + " " + user.getLastName(),
+                                history.diagnosis(),
+                                history.treatment(),
+                                history.dosage(),
+                                history.frequency(),
+                                history.duration(),
+                                history.sickLeaveDays(),
+                                history.visitDate()
+                        ))));
     }
 }

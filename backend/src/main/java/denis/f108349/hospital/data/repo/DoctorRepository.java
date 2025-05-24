@@ -5,7 +5,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface DoctorRepository extends ReactiveCrudRepository<Doctor, String> {
+public interface DoctorRepository extends ReactiveCrudRepository<Doctor, String>, DoctorJoinRepository {
     Mono<Doctor> findByKeycloakId(String id);
     
     Flux<Doctor> findAllByIsGpIs(boolean gp);
