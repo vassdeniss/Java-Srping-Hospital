@@ -2,7 +2,9 @@ package denis.f108349.hospital.data.projection;
 
 import java.time.LocalDateTime;
 
-public record PatientHistoryProjection(
+public record HistoryProjection(
+    String id,
+    String name,
     String diagnosis,
     String treatment,
     String dosage,

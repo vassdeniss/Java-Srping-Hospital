@@ -1,9 +1,8 @@
 package denis.f108349.hospital.service.impl;
 
-import denis.f108349.hospital.data.projection.PatientHistoryProjection;
+import denis.f108349.hospital.data.projection.HistoryProjection;
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.model.Patient;
-import denis.f108349.hospital.dto.PatientHistoryDto;
 import denis.f108349.hospital.exception.EntityNotFoundException;
 import denis.f108349.hospital.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Flux<PatientHistoryProjection> getPatientHistory(String patientId) {
+    public Flux<HistoryProjection> getPatientHistory(String patientId) {
         return this.patientRepository.findPatientHistoryById(patientId);
     }
 
