@@ -1,5 +1,6 @@
 package denis.f108349.hospital.data.repo;
 
+import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.data.projection.HistoryProjection;
 import lombok.AllArgsConstructor;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -49,6 +50,22 @@ public class PatientJoinRepositoryImpl implements PatientJoinRepository {
                         row.get("sick_leave_days", Integer.class),
                         row.get("visit_date", LocalDateTime.class)
                 ))
+                .all();
+    }
+    
+    @Override
+    public Flux<Patient> findPatientsByDiagnosis(String diagnosisCode) {
+        String sql = """
+            SELECT DISTINCT p.*
+            FROM Patient p
+            LEFT JOIN Visit v ON v.patient_id = p.id
+            LEFT JOIN Diagnosis d ON d.visit_id = v.id
+            WHERE d.code = :diagnosisCode
+        """;
+        
+        return this.databaseClient.sql(sql)
+                .bind("diagnosisCode", diagnosisCode)
+                .mapProperties(Patient.class)
                 .all();
     }
 }

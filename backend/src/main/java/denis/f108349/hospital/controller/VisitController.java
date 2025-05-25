@@ -74,7 +74,7 @@ public class VisitController {
     }
     
     private Mono<VisitDto> toVisitDto(VisitProjection visit) {
-      return this.userService.getUserById(visit.doctorId())
+        return this.userService.getUserById(visit.doctorId())
               .flatMap(doctor -> this.userService.getUserById(visit.patientId())
               .map(patient -> new VisitDto(
                       visit.id(),
@@ -84,6 +84,6 @@ public class VisitController {
                       patient.getFirstName(),
                       patient.getLastName()
               ))
-          );
+        );
     }
 }
