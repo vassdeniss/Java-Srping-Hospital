@@ -1,6 +1,7 @@
 package denis.f108349.hospital.service;
 
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.data.projection.DiagnosisCountProjection;
 import reactor.core.publisher.Flux;
 
 public interface ReportService {
@@ -20,6 +21,8 @@ public interface ReportService {
 //    /* ---------- (a) – (j) reports ---------- */
 //
       Flux<Patient> getAllPatientsByDiagnosis(String diagnosisCode);
+
+      Flux<DiagnosisCountProjection> getCommonDiagnosisCount();
 //
 //    /** (c) patients whose GP is <gpId>. */
 //    Flux<PatientDto> findPatientsByGp(UUID gpId);

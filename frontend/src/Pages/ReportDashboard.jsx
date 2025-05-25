@@ -1,0 +1,141 @@
+import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import {
+  getPatientsByDiagnosis,
+  getMostCommonDiagnosis,
+} from '../api/reportApi';
+import './ReportDashboard.css';
+
+export default function ReportsDashboard() {
+  const { isAuth, redirectToLogin } = useOutletContext();
+  const [activeReport, setActiveReport] = useState(null);
+  const [diagnosisCode, setDiagnosisCode] = useState('');
+  const [patients, setPatients] = useState([]);
+  const [commonDiagnoses, setCommonDiagnoses] = useState([]);
+
+  useEffect(() => {
+    if (!isAuth) {
+      redirectToLogin();
+    }
+  }, [isAuth]);
+
+  useEffect(() => {
+    if (activeReport === 'most-common-diagnoses') {
+      fetchMostCommonDiagnoses();
+    }
+  }, [activeReport]);
+
+  const fetchPatientsByDiagnosis = async () => {
+    try {
+      const data = await getPatientsByDiagnosis(diagnosisCode);
+      setPatients(data);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
+  };
+
+  const fetchMostCommonDiagnoses = async () => {
+    try {
+      const data = await getMostCommonDiagnosis();
+      setCommonDiagnoses(data);
+    } catch (error) {
+      console.error('Error fetching common diagnoses:', error);
+    }
+  };
+
+  return (
+    <div className="reports-container">
+      <header className="reports-header">
+        <h1 className="reports-title">Medical Analytics Dashboard</h1>
+        <p>Generate detailed medical reports and insights</p>
+      </header>
+
+      <div className="report-grid">
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('diagnosis-patients')}
+        >
+          <h3>Patients by Diagnosis</h3>
+          <p>View patients with specific diagnosis codes</p>
+        </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('most-common-diagnoses')}
+        >
+          <h3>Common Diagnoses</h3>
+          <p>View most frequently occurring diagnoses</p>
+        </div>
+        {/* Add more report cards here */}
+      </div>
+
+      {activeReport === 'diagnosis-patients' && (
+        <div className="report-content">
+          <div className="report-controls">
+            <input
+              type="text"
+              className="report-input"
+              placeholder="Enter diagnosis code (e.g., J45.901)"
+              value={diagnosisCode}
+              onChange={(e) => setDiagnosisCode(e.target.value)}
+            />
+            <button
+              className="report-button"
+              onClick={fetchPatientsByDiagnosis}
+            >
+              Generate Report
+            </button>
+          </div>
+
+          {patients.length > 0 ? (
+            <div className="patients-grid">
+              {patients.map((patient) => (
+                <div key={patient.patient.id} className="patient-card">
+                  <div className="patient-header">
+                    <div className="patient-avatar">
+                      {patient.user.firstName[0]}
+                      {patient.user.lastName[0]}
+                    </div>
+                    <div className="patient-info">
+                      <h4>
+                        {patient.user.firstName} {patient.user.lastName}
+                      </h4>
+                      <p>{patient.user.email}</p>
+                    </div>
+                  </div>
+                  <div className="patient-details">
+                    <div className="detail-row">
+                      <span className="detail-label">EGN:</span>
+                      <span className="detail-value">{patient.user.egn}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-results">
+              No patients found matching this diagnosis code
+            </p>
+          )}
+        </div>
+      )}
+
+      {activeReport === 'most-common-diagnoses' && (
+        <div className="report-content">
+          <h2 className="section-title">Most Common Diagnoses</h2>
+          <div className="diagnoses-list">
+            {commonDiagnoses.map((diagnosis, index) => (
+              <div key={diagnosis.code} className="diagnosis-card">
+                <div className="diagnosis-rank">#{index + 1}</div>
+                <div className="diagnosis-info">
+                  <h3 className="diagnosis-name">{diagnosis.name}</h3>
+                  <p className="diagnosis-code">{diagnosis.code}</p>
+                </div>
+                <div className="diagnosis-count">{diagnosis.total} cases</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

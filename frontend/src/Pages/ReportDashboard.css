@@ -1,0 +1,236 @@
+.reports-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+.reports-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.reports-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.report-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.report-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  border-color: #3498db;
+}
+
+.report-card h3 {
+  color: #3498db;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+}
+
+.report-card p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.report-content {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.report-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.report-input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.report-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.report-button {
+  padding: 0.8rem 1.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.report-button:hover {
+  background: #2980b9;
+}
+
+.patients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.patient-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.patient-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.patient-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #3498db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.patient-info h4 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.patient-info p {
+  margin: 0.2rem 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.patient-details {
+  border-top: 1px solid #ecf0f1;
+  padding-top: 1rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.detail-label {
+  color: #7f8c8d;
+  margin-right: 8px;
+}
+
+.detail-value {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: #3498db;
+}
+
+.diagnoses-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.diagnosis-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.diagnosis-rank {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3498db;
+  margin-right: 1.5rem;
+  min-width: 40px;
+}
+
+.diagnosis-info {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.diagnosis-code {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.diagnosis-name {
+  margin: 0.3rem 0 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.diagnosis-count {
+  font-weight: bold;
+  color: #e67e22;
+  min-width: 100px;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 1rem;
+  }
+
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-controls {
+    flex-direction: column;
+  }
+
+  .report-button {
+    width: 100%;
+  }
+}

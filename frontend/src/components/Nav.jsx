@@ -22,9 +22,17 @@ const Nav = () => {
           {keycloak.authenticated ? (
             <>
               {roles.includes('admin') && (
-                <button onClick={handleAdmin} className="nav-link">
-                  Admin Dashboard
-                </button>
+                <>
+                  <button onClick={handleAdmin} className="nav-link">
+                    Admin Dashboard
+                  </button>
+                  <button
+                    onClick={() => navigate('/reports')}
+                    className="nav-link"
+                  >
+                    Reports
+                  </button>
+                </>
               )}
               {roles.includes('patient') && (
                 <button

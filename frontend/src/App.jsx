@@ -7,6 +7,7 @@ import './App.css';
 import PatientDashboard from './Pages/PatientDashboard';
 import AdminDashboard from './Pages/AdminDashboard';
 import DoctorDashboard from './Pages/DoctorDashboard';
+import ReportDashboard from './Pages/ReportDashboard';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: '/doctor/dashboard',
         element: <DoctorDashboard />,
+      },
+      {
+        path: '/reports',
+        element: <ReportDashboard />,
       },
     ],
   },

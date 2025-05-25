@@ -1,5 +1,6 @@
 package denis.f108349.hospital.controller;
 
+import denis.f108349.hospital.dto.DiagnosisCountDto;
 import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.ReportService;
 import denis.f108349.hospital.service.UserService;
@@ -26,5 +27,11 @@ public class ReportController {
                         userService.getUserById(patient.getKeycloakId())
                                 .map(user -> new PatientDto(patient, user, null))
                 );
+    }
+    
+    @GetMapping("/diagnoses/common")
+    public Flux<DiagnosisCountDto> getMostCommonDiagnoses() {
+        return this.reportService.getCommonDiagnosisCount()
+                .map(proj -> new DiagnosisCountDto(proj.code(), proj.name(), proj.total()));
     }
 }
