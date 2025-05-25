@@ -5,13 +5,18 @@ import {
   getMostCommonDiagnosis,
 } from '../api/reportApi';
 import './ReportDashboard.css';
+import { getAllGps } from '../api/doctorApi';
+import { getPatientsByGp } from '../api/patientApi';
 
 export default function ReportsDashboard() {
   const { isAuth, redirectToLogin } = useOutletContext();
   const [activeReport, setActiveReport] = useState(null);
   const [diagnosisCode, setDiagnosisCode] = useState('');
+  const [gpId, setGpId] = useState('');
   const [patients, setPatients] = useState([]);
   const [commonDiagnoses, setCommonDiagnoses] = useState([]);
+  const [gps, setGps] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuth) {
@@ -23,23 +28,56 @@ export default function ReportsDashboard() {
     if (activeReport === 'most-common-diagnoses') {
       fetchMostCommonDiagnoses();
     }
+    if (activeReport === 'gp-patients') {
+      fetchAllGps();
+    }
   }, [activeReport]);
 
   const fetchPatientsByDiagnosis = async () => {
+    setIsLoading(true);
     try {
       const data = await getPatientsByDiagnosis(diagnosisCode);
       setPatients(data);
     } catch (error) {
       console.error('Error fetching patients:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchMostCommonDiagnoses = async () => {
+    setIsLoading(true);
     try {
       const data = await getMostCommonDiagnosis();
       setCommonDiagnoses(data);
     } catch (error) {
       console.error('Error fetching common diagnoses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchAllGps = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAllGps();
+      setGps(data);
+    } catch (error) {
+      console.error('Error fetching GPs:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPatientsByGp = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getPatientsByGp(gpId);
+      setPatients(data);
+    } catch (error) {
+      console.error('Error fetching GP patients:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,11 +103,24 @@ export default function ReportsDashboard() {
           <h3>Common Diagnoses</h3>
           <p>View most frequently occurring diagnoses</p>
         </div>
-        {/* Add more report cards here */}
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('gp-patients')}
+        >
+          <h3>GP Patient List</h3>
+          <p>View all patients assigned to specific GP</p>
+        </div>
       </div>
+
+      {isLoading && (
+        <div className="loading-state">
+          <p>Loading data...</p>
+        </div>
+      )}
 
       {activeReport === 'diagnosis-patients' && (
         <div className="report-content">
+          <h2 className="section-title">Patients by Diagnosis Code</h2>
           <div className="report-controls">
             <input
               type="text"
@@ -130,10 +181,66 @@ export default function ReportsDashboard() {
                   <h3 className="diagnosis-name">{diagnosis.name}</h3>
                   <p className="diagnosis-code">{diagnosis.code}</p>
                 </div>
-                <div className="diagnosis-count">{diagnosis.total} cases</div>
+                <div className="diagnosis-count">{diagnosis.count} cases</div>
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {activeReport === 'gp-patients' && (
+        <div className="report-content">
+          <h2 className="section-title">Patients by GP</h2>
+          <div className="report-controls">
+            <select
+              className="report-input"
+              value={gpId}
+              onChange={(e) => setGpId(e.target.value)}
+            >
+              <option value="">Select GP</option>
+              {gps.map((gp) => (
+                <option key={gp.doctor.id} value={gp.doctor.id}>
+                  Dr. {gp.user.firstName} {gp.user.lastName}
+                </option>
+              ))}
+            </select>
+            <button className="report-button" onClick={fetchPatientsByGp}>
+              Get Patients
+            </button>
+          </div>
+
+          {patients.length > 0 ? (
+            <div className="patients-grid">
+              {patients.map((patient) => (
+                <div key={patient.patient.id} className="patient-card">
+                  <div className="patient-header">
+                    <div className="patient-avatar">
+                      {patient.user.firstName[0]}
+                      {patient.user.lastName[0]}
+                    </div>
+                    <div className="patient-info">
+                      <h4>
+                        {patient.user.firstName} {patient.user.lastName}
+                      </h4>
+                      <p>{patient.user.email}</p>
+                    </div>
+                  </div>
+                  <div className="patient-details">
+                    <div className="detail-row">
+                      <span className="detail-label">EGN:</span>
+                      <span className="detail-value">{patient.user.egn}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-results">
+              {gpId
+                ? 'No patients found for this GP'
+                : 'Please select a GP first'}
+            </p>
+          )}
         </div>
       )}
     </div>

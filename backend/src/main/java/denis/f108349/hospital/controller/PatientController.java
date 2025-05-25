@@ -22,7 +22,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.List;
 
 // TODO: test
 // TODO: fix postman endpoints
@@ -138,5 +137,14 @@ public class PatientController {
                             history.sickLeaveDays(),
                             history.visitDate()
                     ))));
+    }
+    
+    // TODO: api info
+    @GetMapping("/gps/{id}")
+    public Flux<PatientDto> getPatientsByGp(@PathVariable String id) {
+        return this.patientService.getPatientsByGpDoctorId(id)
+            .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
+                .flatMap(patientUser -> Mono.just(new PatientDto(patient, patientUser, null)))
+            );
     }
 }

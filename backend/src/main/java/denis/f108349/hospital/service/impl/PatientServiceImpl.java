@@ -27,6 +27,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public Flux<Patient> getPatientsByGpDoctorId(String id) {
+        return this.patientRepository.findByGpDoctorId(id);
+    }
+
+    @Override
     public Flux<Patient> getAllPatients() {
         return this.patientRepository.findAll();
     }

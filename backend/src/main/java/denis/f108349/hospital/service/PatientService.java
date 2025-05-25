@@ -10,6 +10,8 @@ public interface PatientService {
     
     Mono<Patient> getPatientByKeycloakId(String id);
     
+    Flux<Patient> getPatientsByGpDoctorId(String id);
+    
     Flux<Patient> getAllPatients();
     
     Flux<HistoryProjection> getPatientHistory(String patientId);
