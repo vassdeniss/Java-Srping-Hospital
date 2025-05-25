@@ -22,8 +22,7 @@
 }
 
 .profile-card,
-.appointment-card,
-.history-card {
+.appointment-card {
   background: white;
   padding: 1.5rem;
   border-radius: 10px;
@@ -32,19 +31,16 @@
 }
 
 .profile-card p,
-.appointment-card p,
-.history-card p {
+.appointment-card p {
   margin: 0.5rem 0;
 }
 
-.appointment-list,
-.history-list {
+.appointment-list {
   display: flex;
   flex-direction: column;
 }
 
-.appointment-list,
-.history-list {
+.appointment-list {
   gap: 1rem;
 }
 

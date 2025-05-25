@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { getVisits, updateVisit } from '../api/visitApi';
 import { useOutletContext } from 'react-router-dom';
-import { getDoctor } from '../api/doctorApi';
+import { getDoctor, getDoctorHistory } from '../api/doctorApi';
 
 import './DoctorDashboard.css';
 import { getAllMedication } from '../api/medicationApi';
 import { createDiagnosis } from '../api/diagnosisApi';
 import { createPrescribedMedication } from '../api/prescribedMedicationApi';
 import { createSickLeave } from '../api/sickLeaveApi';
+import MedicalHistory from '../components/MedicalHistory';
 
 export default function DoctorDashboard() {
   const { isAuth, id, redirectToLogin } = useOutletContext();
@@ -28,6 +29,7 @@ export default function DoctorDashboard() {
     ],
     sickLeave: { startDate: '', days: '' },
   });
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +42,7 @@ export default function DoctorDashboard() {
         setDoctor(data);
         setVisits(await getVisits(data.doctor.id));
         setMedication(await getAllMedication());
+        setHistory(await getDoctorHistory(data.doctor.id));
       } catch (error) {
         console.error(error.message);
       }
@@ -262,6 +265,10 @@ export default function DoctorDashboard() {
             )}
           </div>
         ))}
+      </div>
+      <div className="dashboard-section">
+        <h2 className="section-title">Medical History</h2>
+        <MedicalHistory history={history} />
       </div>
     </div>
   );

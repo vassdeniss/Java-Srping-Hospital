@@ -9,6 +9,7 @@ import {
   updatePatient,
 } from '../api/patientApi';
 import { createVisit, getVisits } from '../api/visitApi';
+import MedicalHistory from '../components/MedicalHistory';
 
 const PatientDashboard = () => {
   const { isAuth, id, redirectToLogin } = useOutletContext();
@@ -186,43 +187,7 @@ const PatientDashboard = () => {
       </div>
       <div className="dashboard-section">
         <h2 className="section-title">Medical History</h2>
-        <div className="history-list">
-          {history.map((entry, index) => (
-            <div className="history-card" key={index}>
-              <p>
-                <strong>Diagnosis:</strong> {entry.diagnosis}
-              </p>
-              <p>
-                <strong>Treatment:</strong> {entry.treatment}
-              </p>
-              {entry.dosage && (
-                <p>
-                  <strong>Dosage:</strong> {entry.dosage}
-                </p>
-              )}
-              {entry.frequency && (
-                <p>
-                  <strong>Frequency:</strong> {entry.frequency}
-                </p>
-              )}
-              {entry.duration && (
-                <p>
-                  <strong>Duration:</strong> {entry.duration}
-                </p>
-              )}
-              {entry.sickLeaveDays && (
-                <p>
-                  <strong>Sick Leave:</strong> {entry.sickLeaveDays} days
-                </p>
-              )}
-              <p>
-                <strong>Date:</strong>{' '}
-                {new Date(entry.visitDate).toLocaleDateString()}{' '}
-                {new Date(entry.visitDate).toLocaleTimeString()}
-              </p>
-            </div>
-          ))}
-        </div>
+        <MedicalHistory history={history} />
       </div>
     </div>
   );

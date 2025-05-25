@@ -12,6 +12,10 @@ export async function getAllGps() {
   return apiRequest('http://localhost:8080/api/doctors/all?gp=true');
 }
 
+export async function getDoctorHistory(id) {
+  return apiRequest(`http://localhost:8080/api/doctors/${id}/history`);
+}
+
 export async function createDoctor(patientId) {
   return apiRequest('http://localhost:8080/api/doctors/create', {
     method: 'POST',
