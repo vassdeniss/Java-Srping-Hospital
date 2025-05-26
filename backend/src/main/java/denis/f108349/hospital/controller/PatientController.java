@@ -1,6 +1,7 @@
 package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.data.projection.HistoryProjection;
+import denis.f108349.hospital.dto.DoctorPatientCountDto;
 import denis.f108349.hospital.dto.PatientRequest;
 import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.data.model.Patient;
@@ -145,6 +146,15 @@ public class PatientController {
         return this.patientService.getPatientsByGpDoctorId(id)
             .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
                 .flatMap(patientUser -> Mono.just(new PatientDto(patient, patientUser, null)))
+            );
+    }
+    
+    // TODO: api info
+    @GetMapping("/gps/count")
+    public Flux<DoctorPatientCountDto> getPatientsByGpCount() {
+        return this.patientService.getCountPatientsPerGp()
+            .flatMap(doctor -> this.userService.getUserById(doctor.gpDoctorId())
+                .flatMap(doctorUser -> Mono.just(new DoctorPatientCountDto(doctorUser, doctor.total())))
             );
     }
 }

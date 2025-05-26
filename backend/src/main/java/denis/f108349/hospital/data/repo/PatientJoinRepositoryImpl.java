@@ -1,6 +1,7 @@
 package denis.f108349.hospital.data.repo;
 
 import denis.f108349.hospital.data.model.Patient;
+import denis.f108349.hospital.data.projection.DoctorPatientCountProjection;
 import denis.f108349.hospital.data.projection.HistoryProjection;
 import lombok.AllArgsConstructor;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -67,5 +68,22 @@ public class PatientJoinRepositoryImpl implements PatientJoinRepository {
                 .bind("diagnosisCode", diagnosisCode)
                 .mapProperties(Patient.class)
                 .all();
+    }
+
+    @Override
+    public Flux<DoctorPatientCountProjection> countPatientsPerGp() {
+        String sql = """
+            SELECT    d.keycloak_id  AS gpDoctorId,
+                      COUNT(*)       AS total
+            FROM      Patient p
+            LEFT JOIN Doctor d ON p.gp_doctor_id = d.id
+            WHERE     p.gp_doctor_id IS NOT NULL
+            GROUP     BY p.gp_doctor_id
+            ORDER     BY total DESC
+        """;
+        
+        return this.databaseClient.sql(sql)
+                .mapProperties(DoctorPatientCountProjection.class)
+                .all();    
     }
 }

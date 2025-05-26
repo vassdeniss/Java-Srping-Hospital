@@ -6,7 +6,8 @@ import {
 } from '../api/reportApi';
 import './ReportDashboard.css';
 import { getAllGps } from '../api/doctorApi';
-import { getPatientsByGp } from '../api/patientApi';
+import { getPatientsByGp, getPatientsByGpCount } from '../api/patientApi';
+import GpCount from '../components/GpCount';
 
 export default function ReportsDashboard() {
   const { isAuth, redirectToLogin } = useOutletContext();
@@ -16,6 +17,8 @@ export default function ReportsDashboard() {
   const [patients, setPatients] = useState([]);
   const [commonDiagnoses, setCommonDiagnoses] = useState([]);
   const [gps, setGps] = useState([]);
+  const [gpPatientCounts, setGpPatientCounts] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -30,6 +33,9 @@ export default function ReportsDashboard() {
     }
     if (activeReport === 'gp-patients') {
       fetchAllGps();
+    }
+    if (activeReport === 'gp-patient-counts') {
+      fetchGpPatientCounts();
     }
   }, [activeReport]);
 
@@ -81,6 +87,18 @@ export default function ReportsDashboard() {
     }
   };
 
+  const fetchGpPatientCounts = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getPatientsByGpCount();
+      setGpPatientCounts(data);
+    } catch (error) {
+      console.error('Error fetching GP patient counts:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="reports-container">
       <header className="reports-header">
@@ -109,6 +127,13 @@ export default function ReportsDashboard() {
         >
           <h3>GP Patient List</h3>
           <p>View all patients assigned to specific GP</p>
+        </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('gp-patient-counts')}
+        >
+          <h3>Patients per GP</h3>
+          <p>View patient counts for each GP</p>
         </div>
       </div>
 
@@ -242,6 +267,10 @@ export default function ReportsDashboard() {
             </p>
           )}
         </div>
+      )}
+
+      {activeReport === 'gp-patient-counts' && (
+        <GpCount gpPatientCounts={gpPatientCounts} />
       )}
     </div>
   );

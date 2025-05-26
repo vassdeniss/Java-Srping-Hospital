@@ -16,6 +16,10 @@ export const getPatientsByGp = async (gpId) => {
   return apiRequest(`http://localhost:8080/api/patients/gps/${gpId}`);
 };
 
+export const getPatientsByGpCount = async () => {
+  return apiRequest('http://localhost:8080/api/patients/gps/count');
+};
+
 export async function updatePatient(id, doctorId, healthInsurance) {
   return apiRequest('http://localhost:8080/api/patients/' + id, {
     method: 'PATCH',
