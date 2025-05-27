@@ -1,6 +1,30 @@
-import './GpCount.css';
+import { useEffect, useState } from 'react';
 
-const GpCount = ({ gpPatientCounts }) => {
+import './GpCount.css';
+import { getPatientsByGpCount } from '../api/patientApi';
+
+const GpCount = () => {
+  const [gpPatientCounts, setGpPatientCounts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchGpPatientCounts = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getPatientsByGpCount();
+        setGpPatientCounts(data);
+      } catch (error) {
+        console.error('Error fetching GP patient counts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGpPatientCounts();
+  }, []);
+
+  if (isLoading) return <p>Loading GP patient counts...</p>;
+
   return (
     <div className="report-content">
       <h2 className="section-title">Patients per GP</h2>

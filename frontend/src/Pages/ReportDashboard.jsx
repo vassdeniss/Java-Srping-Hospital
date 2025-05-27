@@ -6,8 +6,9 @@ import {
 } from '../api/reportApi';
 import './ReportDashboard.css';
 import { getAllGps } from '../api/doctorApi';
-import { getPatientsByGp, getPatientsByGpCount } from '../api/patientApi';
+import { getPatientsByGp } from '../api/patientApi';
 import GpCount from '../components/GpCount';
+import PatientList from '../components/PatientList';
 
 export default function ReportsDashboard() {
   const { isAuth, redirectToLogin } = useOutletContext();
@@ -17,8 +18,6 @@ export default function ReportsDashboard() {
   const [patients, setPatients] = useState([]);
   const [commonDiagnoses, setCommonDiagnoses] = useState([]);
   const [gps, setGps] = useState([]);
-  const [gpPatientCounts, setGpPatientCounts] = useState([]);
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -28,14 +27,8 @@ export default function ReportsDashboard() {
   }, [isAuth]);
 
   useEffect(() => {
-    if (activeReport === 'most-common-diagnoses') {
-      fetchMostCommonDiagnoses();
-    }
-    if (activeReport === 'gp-patients') {
-      fetchAllGps();
-    }
-    if (activeReport === 'gp-patient-counts') {
-      fetchGpPatientCounts();
+    if (activeReport && REPORTS[activeReport]) {
+      REPORTS[activeReport]();
     }
   }, [activeReport]);
 
@@ -87,16 +80,9 @@ export default function ReportsDashboard() {
     }
   };
 
-  const fetchGpPatientCounts = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getPatientsByGpCount();
-      setGpPatientCounts(data);
-    } catch (error) {
-      console.error('Error fetching GP patient counts:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const REPORTS = {
+    'most-common-diagnoses': fetchMostCommonDiagnoses,
+    'gp-patients': fetchAllGps,
   };
 
   return (
@@ -163,30 +149,7 @@ export default function ReportsDashboard() {
           </div>
 
           {patients.length > 0 ? (
-            <div className="patients-grid">
-              {patients.map((patient) => (
-                <div key={patient.patient.id} className="patient-card">
-                  <div className="patient-header">
-                    <div className="patient-avatar">
-                      {patient.user.firstName[0]}
-                      {patient.user.lastName[0]}
-                    </div>
-                    <div className="patient-info">
-                      <h4>
-                        {patient.user.firstName} {patient.user.lastName}
-                      </h4>
-                      <p>{patient.user.email}</p>
-                    </div>
-                  </div>
-                  <div className="patient-details">
-                    <div className="detail-row">
-                      <span className="detail-label">EGN:</span>
-                      <span className="detail-value">{patient.user.egn}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PatientList patients={patients} />
           ) : (
             <p className="no-results">
               No patients found matching this diagnosis code
@@ -235,30 +198,7 @@ export default function ReportsDashboard() {
           </div>
 
           {patients.length > 0 ? (
-            <div className="patients-grid">
-              {patients.map((patient) => (
-                <div key={patient.patient.id} className="patient-card">
-                  <div className="patient-header">
-                    <div className="patient-avatar">
-                      {patient.user.firstName[0]}
-                      {patient.user.lastName[0]}
-                    </div>
-                    <div className="patient-info">
-                      <h4>
-                        {patient.user.firstName} {patient.user.lastName}
-                      </h4>
-                      <p>{patient.user.email}</p>
-                    </div>
-                  </div>
-                  <div className="patient-details">
-                    <div className="detail-row">
-                      <span className="detail-label">EGN:</span>
-                      <span className="detail-value">{patient.user.egn}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PatientList patients={patients} />
           ) : (
             <p className="no-results">
               {gpId
@@ -269,9 +209,7 @@ export default function ReportsDashboard() {
         </div>
       )}
 
-      {activeReport === 'gp-patient-counts' && (
-        <GpCount gpPatientCounts={gpPatientCounts} />
-      )}
+      {activeReport === 'gp-patient-counts' && <GpCount />}
     </div>
   );
 }
