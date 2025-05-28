@@ -153,7 +153,7 @@ public class PatientController {
     @GetMapping("/gps/count")
     public Flux<DoctorPatientCountDto> getPatientsByGpCount() {
         return this.patientService.getCountPatientsPerGp()
-            .flatMap(doctor -> this.userService.getUserById(doctor.gpDoctorId())
+            .flatMap(doctor -> this.userService.getUserById(doctor.id())
                 .flatMap(doctorUser -> Mono.just(new DoctorPatientCountDto(doctorUser, doctor.total())))
             );
     }

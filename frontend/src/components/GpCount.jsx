@@ -30,7 +30,7 @@ const GpCount = () => {
       <h2 className="section-title">Patients per GP</h2>
       <div className="gp-counts-grid">
         {gpPatientCounts.map((gp, index) => (
-          <div key={gp.doctor.doctorId} className="gp-count-card">
+          <div key={gp.doctor.keycloakId} className="gp-count-card">
             <div className="gp-rank">#{index + 1}</div>
             <div className="gp-info">
               <h3 className="gp-name">

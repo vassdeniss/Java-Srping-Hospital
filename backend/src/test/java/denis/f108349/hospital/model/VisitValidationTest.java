@@ -72,7 +72,7 @@ public class VisitValidationTest {
         assertEquals(1, violations.size());
         ConstraintViolation<Visit> violation = violations.iterator().next();
         assertEquals("Doctor ID is required", violation.getMessage());
-        assertEquals("doctorId", violation.getPropertyPath().toString());
+        assertEquals("id", violation.getPropertyPath().toString());
     }
 
     @Test

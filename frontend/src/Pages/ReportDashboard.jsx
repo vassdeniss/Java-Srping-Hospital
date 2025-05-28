@@ -5,19 +5,16 @@ import {
   getMostCommonDiagnosis,
 } from '../api/reportApi';
 import './ReportDashboard.css';
-import { getAllGps } from '../api/doctorApi';
-import { getPatientsByGp } from '../api/patientApi';
 import GpCount from '../components/GpCount';
 import PatientList from '../components/PatientList';
+import GpPatients from '../components/GpPatients';
+import VisitsPerDoctor from '../components/VisitsPerDoctor';
 
 export default function ReportsDashboard() {
   const { isAuth, redirectToLogin } = useOutletContext();
   const [activeReport, setActiveReport] = useState(null);
   const [diagnosisCode, setDiagnosisCode] = useState('');
-  const [gpId, setGpId] = useState('');
-  const [patients, setPatients] = useState([]);
   const [commonDiagnoses, setCommonDiagnoses] = useState([]);
-  const [gps, setGps] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -56,33 +53,8 @@ export default function ReportsDashboard() {
     }
   };
 
-  const fetchAllGps = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllGps();
-      setGps(data);
-    } catch (error) {
-      console.error('Error fetching GPs:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchPatientsByGp = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getPatientsByGp(gpId);
-      setPatients(data);
-    } catch (error) {
-      console.error('Error fetching GP patients:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const REPORTS = {
     'most-common-diagnoses': fetchMostCommonDiagnoses,
-    'gp-patients': fetchAllGps,
   };
 
   return (
@@ -120,6 +92,13 @@ export default function ReportsDashboard() {
         >
           <h3>Patients per GP</h3>
           <p>View patient counts for each GP</p>
+        </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('visits-per-doctor')}
+        >
+          <h3>Visits per Doctor</h3>
+          <p>View visit statistics by doctor</p>
         </div>
       </div>
 
@@ -176,40 +155,9 @@ export default function ReportsDashboard() {
         </div>
       )}
 
-      {activeReport === 'gp-patients' && (
-        <div className="report-content">
-          <h2 className="section-title">Patients by GP</h2>
-          <div className="report-controls">
-            <select
-              className="report-input"
-              value={gpId}
-              onChange={(e) => setGpId(e.target.value)}
-            >
-              <option value="">Select GP</option>
-              {gps.map((gp) => (
-                <option key={gp.doctor.id} value={gp.doctor.id}>
-                  Dr. {gp.user.firstName} {gp.user.lastName}
-                </option>
-              ))}
-            </select>
-            <button className="report-button" onClick={fetchPatientsByGp}>
-              Get Patients
-            </button>
-          </div>
-
-          {patients.length > 0 ? (
-            <PatientList patients={patients} />
-          ) : (
-            <p className="no-results">
-              {gpId
-                ? 'No patients found for this GP'
-                : 'Please select a GP first'}
-            </p>
-          )}
-        </div>
-      )}
-
+      {activeReport === 'gp-patients' && <GpPatients />}
       {activeReport === 'gp-patient-counts' && <GpCount />}
+      {activeReport === 'visits-per-doctor' && <VisitsPerDoctor />}
     </div>
   );
 }

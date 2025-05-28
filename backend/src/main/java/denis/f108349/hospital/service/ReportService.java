@@ -2,12 +2,11 @@ package denis.f108349.hospital.service;
 
 import denis.f108349.hospital.data.model.Patient;
 import denis.f108349.hospital.data.projection.DiagnosisCountProjection;
+import denis.f108349.hospital.data.projection.DoctorPatientCountProjection;
+import denis.f108349.hospital.dto.DoctorPatientCountDto;
 import reactor.core.publisher.Flux;
 
 public interface ReportService {
-//
-//    /* ---------- dashboard counters ---------- */
-//
 //    /** # patients that have at least one visit with <diagnosisCode>. */
 //    Mono<Long> countPatientsWithDiagnosis(String diagnosisCode);
 //
@@ -30,8 +29,7 @@ public interface ReportService {
 //    /** (d) alias for {@link #countPatientsPerGp}. */
 //    Flux<DoctorPatientCountDto> listPatientsPerGp();
 //
-//    /** (e) alias for {@link #countVisitsPerDoctor}. */
-//    Flux<DoctorVisitCountDto> listVisitsPerDoctor();
+      Flux<DoctorPatientCountDto> getVisitsPerDoctor();
 //
 //    /** (f) full visit list for a patient (➡ you **already** built this—omit if you like). */
 //    Flux<VisitDto> findVisitsByPatient(UUID patientId);
@@ -39,9 +37,9 @@ public interface ReportService {
 //    /** (g) visits (any doctor) during [from, to]. */
 //    Flux<VisitDto> findVisitsInPeriod(Instant from, Instant to);
 //
-//    /** (h) visits for <doctorId> during [from, to]. */
+//    /** (h) visits for <id> during [from, to]. */
 //    Flux<VisitDto> findVisitsByDoctorInPeriod(
-//            UUID doctorId, Instant from, Instant to);
+//            UUID id, Instant from, Instant to);
 //
 //    /** (i) month of the year with the most sick-leave certificates. */
 //    Mono<MostIssuedMonthDto> findBusiestSickLeaveMonth();

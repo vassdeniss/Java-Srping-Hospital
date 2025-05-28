@@ -9,3 +9,7 @@ export const getPatientsByDiagnosis = async (code) => {
 export const getMostCommonDiagnosis = async () => {
   return apiRequest('http://localhost:8080/api/reports/diagnoses/common');
 };
+
+export const getVisitsPerDoctor = async () => {
+  return apiRequest('http://localhost:8080/api/reports/doctors/visits');
+};

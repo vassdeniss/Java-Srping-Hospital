@@ -1,9 +1,26 @@
-.gp-counts-grid {
+.visits-per-doctor-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.visits-per-doctor-header {
+  margin-bottom: 1.5rem;
+}
+
+.visits-per-doctor-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.visits-list {
   display: grid;
   gap: 1rem;
 }
 
-.gp-count-card {
+.visit-item {
   display: flex;
   align-items: center;
   background: white;
@@ -12,7 +29,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.gp-rank {
+.visit-rank {
   font-size: 1.2rem;
   font-weight: bold;
   color: #3498db;
@@ -20,12 +37,12 @@
   min-width: 40px;
 }
 
-.gp-info {
+.visit-doctor-info {
   flex: 1;
   margin-right: 1rem;
 }
 
-.gp-name {
+.visit-doctor-name {
   margin: 0;
   color: #2c3e50;
   font-size: 1.1rem;
@@ -34,20 +51,20 @@
   flex-wrap: wrap;
 }
 
-.patient-count {
+.visit-count {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 100px;
+  min-width: 80px;
 }
 
-.count-number {
+.visit-count-number {
   font-size: 1.5rem;
   font-weight: bold;
   color: #e67e22;
 }
 
-.count-label {
+.visit-count-label {
   font-size: 0.8rem;
   color: #95a5a6;
   text-transform: uppercase;

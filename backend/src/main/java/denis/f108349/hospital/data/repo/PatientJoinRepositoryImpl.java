@@ -73,7 +73,7 @@ public class PatientJoinRepositoryImpl implements PatientJoinRepository {
     @Override
     public Flux<DoctorPatientCountProjection> countPatientsPerGp() {
         String sql = """
-            SELECT    d.keycloak_id  AS gpDoctorId,
+            SELECT    d.keycloak_id  AS id,
                       COUNT(*)       AS total
             FROM      Patient p
             LEFT JOIN Doctor d ON p.gp_doctor_id = d.id
