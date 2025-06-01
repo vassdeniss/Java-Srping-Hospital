@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { getPatientsByGpCount } from '../api/reportApi';
 
 import './GpCount.css';
-import { getPatientsByGpCount } from '../api/patientApi';
 
 const GpCount = () => {
   const [gpPatientCounts, setGpPatientCounts] = useState([]);

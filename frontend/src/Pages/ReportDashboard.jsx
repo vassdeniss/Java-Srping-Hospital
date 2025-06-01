@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import {
-  getPatientsByDiagnosis,
-  getMostCommonDiagnosis,
-} from '../api/reportApi';
-import './ReportDashboard.css';
+import { getPatientsByDiagnosis } from '../api/reportApi';
 import GpCount from '../components/GpCount';
 import PatientList from '../components/PatientList';
 import GpPatients from '../components/GpPatients';
 import VisitsPerDoctor from '../components/VisitsPerDoctor';
+import CommonDiagnosis from '../components/CommonDiagnosis';
+import VisitsByPeriod from '../components/VisitsByPeriod';
+
+import './ReportDashboard.css';
 
 export default function ReportsDashboard() {
   const { isAuth, redirectToLogin } = useOutletContext();
   const [activeReport, setActiveReport] = useState(null);
   const [diagnosisCode, setDiagnosisCode] = useState('');
-  const [commonDiagnoses, setCommonDiagnoses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -22,12 +21,6 @@ export default function ReportsDashboard() {
       redirectToLogin();
     }
   }, [isAuth]);
-
-  useEffect(() => {
-    if (activeReport && REPORTS[activeReport]) {
-      REPORTS[activeReport]();
-    }
-  }, [activeReport]);
 
   const fetchPatientsByDiagnosis = async () => {
     setIsLoading(true);
@@ -39,22 +32,6 @@ export default function ReportsDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fetchMostCommonDiagnoses = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getMostCommonDiagnosis();
-      setCommonDiagnoses(data);
-    } catch (error) {
-      console.error('Error fetching common diagnoses:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const REPORTS = {
-    'most-common-diagnoses': fetchMostCommonDiagnoses,
   };
 
   return (
@@ -100,6 +77,13 @@ export default function ReportsDashboard() {
           <h3>Visits per Doctor</h3>
           <p>View visit statistics by doctor</p>
         </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('visits-by-period')}
+        >
+          <h3>Visits by Period</h3>
+          <p>View visit statistics for specific time periods</p>
+        </div>
       </div>
 
       {isLoading && (
@@ -137,27 +121,11 @@ export default function ReportsDashboard() {
         </div>
       )}
 
-      {activeReport === 'most-common-diagnoses' && (
-        <div className="report-content">
-          <h2 className="section-title">Most Common Diagnoses</h2>
-          <div className="diagnoses-list">
-            {commonDiagnoses.map((diagnosis, index) => (
-              <div key={diagnosis.code} className="diagnosis-card">
-                <div className="diagnosis-rank">#{index + 1}</div>
-                <div className="diagnosis-info">
-                  <h3 className="diagnosis-name">{diagnosis.name}</h3>
-                  <p className="diagnosis-code">{diagnosis.code}</p>
-                </div>
-                <div className="diagnosis-count">{diagnosis.count} cases</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+      {activeReport === 'most-common-diagnoses' && <CommonDiagnosis />}
       {activeReport === 'gp-patients' && <GpPatients />}
       {activeReport === 'gp-patient-counts' && <GpCount />}
       {activeReport === 'visits-per-doctor' && <VisitsPerDoctor />}
+      {activeReport === 'visits-by-period' && <VisitsByPeriod />}
     </div>
   );
 }

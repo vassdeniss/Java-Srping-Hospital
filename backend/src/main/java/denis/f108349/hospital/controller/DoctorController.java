@@ -114,10 +114,12 @@ public class DoctorController {
     @GetMapping("/{doctorId}/history")
     public Flux<HistoryProjection> getDoctorHistory(@PathVariable String doctorId) {
         return this.doctorService.getDoctorHistory(doctorId)
-                .flatMap(history -> this.userService.getUserById(history.id())
+                .flatMap(history -> this.userService.getUserById(history.patientId())
                         .flatMap(user -> Mono.just(new HistoryProjection(
-                                history.id(),
+                                history.patientId(),
+                                history.doctorId(),
                                 user.getFirstName() + " " + user.getLastName(),
+                                "",
                                 history.diagnosis(),
                                 history.treatment(),
                                 history.dosage(),

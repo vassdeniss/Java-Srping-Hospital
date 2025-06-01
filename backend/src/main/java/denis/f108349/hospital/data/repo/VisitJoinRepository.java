@@ -1,10 +1,10 @@
 package denis.f108349.hospital.data.repo;
 
-import denis.f108349.hospital.data.projection.DiagnosisCountProjection;
-import denis.f108349.hospital.data.projection.DoctorPatientCountProjection;
-import denis.f108349.hospital.data.projection.VisitProjection;
+import denis.f108349.hospital.data.projection.*;
 import org.springframework.data.r2dbc.repository.Query;
 import reactor.core.publisher.Flux;
+
+import java.time.Instant;
 
 public interface VisitJoinRepository {
     @Query("""
@@ -44,4 +44,49 @@ public interface VisitJoinRepository {
         ORDER  BY total DESC
     """)
     Flux<DoctorPatientCountProjection> countVisitsPerDoctor();
+    
+    @Query("""
+        SELECT p.keycloak_id  AS patient_id,
+               do.keycloak_id AS doctor_id,
+               d.name         AS diagnosis,
+               m.name         AS treatment,
+               pm.dosage      AS dosage,
+               pm.frequency   AS frequency,
+               pm.duration    AS duration,
+               s.days         AS sick_leave_days,
+               v.visit_date   AS visit_date
+        FROM   Visit v
+        LEFT   JOIN PrescribedMedication pm ON v.id = pm.visit_id
+        LEFT   JOIN Medication m            ON pm.medication_id = m.id
+        LEFT   JOIN Diagnosis d             ON v.id = d.visit_id
+        LEFT   JOIN SickLeave s             ON v.id = s.visit_id
+        LEFT   JOIN Patient p               ON v.patient_id = p.id
+        LEFT   JOIN Doctor do               ON v.doctor_id = do.id
+        WHERE  v.visit_date BETWEEN :startDate AND :endDate
+        ORDER  BY v.visit_date DESC
+    """)
+    Flux<HistoryProjection> findVisitsInPeriod(Instant startDate, Instant endDate);
+    
+    @Query("""
+        SELECT p.keycloak_id  AS patient_id,
+               do.keycloak_id AS doctor_id,
+               d.name         AS diagnosis,
+               m.name         AS treatment,
+               pm.dosage      AS dosage,
+               pm.frequency   AS frequency,
+               pm.duration    AS duration,
+               s.days         AS sick_leave_days,
+               v.visit_date   AS visit_date
+        FROM   Visit v
+        LEFT   JOIN PrescribedMedication pm ON v.id = pm.visit_id
+        LEFT   JOIN Medication m            ON pm.medication_id = m.id
+        LEFT   JOIN Diagnosis d             ON v.id = d.visit_id
+        LEFT   JOIN SickLeave s             ON v.id = s.visit_id
+        LEFT   JOIN Patient p               ON v.patient_id = p.id
+        LEFT   JOIN Doctor do               ON v.doctor_id = do.id
+        WHERE  v.visit_date BETWEEN :startDate AND :endDate
+          AND  v.doctor_id = :doctorId
+        ORDER  BY v.visit_date DESC
+    """)
+    Flux<HistoryProjection> findVisitsByDoctorInPeriod(String doctorId, Instant startDate, Instant endDate);
 }

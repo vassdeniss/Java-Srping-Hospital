@@ -1,45 +1,27 @@
 package denis.f108349.hospital.service;
 
-import denis.f108349.hospital.data.model.Patient;
-import denis.f108349.hospital.data.projection.DiagnosisCountProjection;
-import denis.f108349.hospital.data.projection.DoctorPatientCountProjection;
+import denis.f108349.hospital.data.projection.HistoryProjection;
+import denis.f108349.hospital.dto.DiagnosisCountDto;
 import denis.f108349.hospital.dto.DoctorPatientCountDto;
+import denis.f108349.hospital.dto.PatientDto;
 import reactor.core.publisher.Flux;
 
-public interface ReportService {
-//    /** # patients that have at least one visit with <diagnosisCode>. */
-//    Mono<Long> countPatientsWithDiagnosis(String diagnosisCode);
-//
-//    /** # patients registered to each GP.  */
-//    Flux<DoctorPatientCountDto> countPatientsPerGp();
-//
-//    /** # visits performed by each doctor. */
-//    Flux<DoctorVisitCountDto> countVisitsPerDoctor();
-//
-//
-//    /* ---------- (a) – (j) reports ---------- */
-//
-      Flux<Patient> getAllPatientsByDiagnosis(String diagnosisCode);
+import java.time.Instant;
 
-      Flux<DiagnosisCountProjection> getCommonDiagnosisCount();
-//
-//    /** (c) patients whose GP is <gpId>. */
-//    Flux<PatientDto> findPatientsByGp(UUID gpId);
-//
-//    /** (d) alias for {@link #countPatientsPerGp}. */
-//    Flux<DoctorPatientCountDto> listPatientsPerGp();
-//
+public interface ReportService {
+      Flux<PatientDto> getAllPatientsByDiagnosis(String diagnosisCode);
+
+      Flux<DiagnosisCountDto> getCommonDiagnosisCount();
+
+      Flux<PatientDto> getPatientsByGpDoctorId(String id);
+      
+      Flux<DoctorPatientCountDto> getCountPatientsPerGp();
+    
       Flux<DoctorPatientCountDto> getVisitsPerDoctor();
-//
-//    /** (f) full visit list for a patient (➡ you **already** built this—omit if you like). */
-//    Flux<VisitDto> findVisitsByPatient(UUID patientId);
-//
-//    /** (g) visits (any doctor) during [from, to]. */
-//    Flux<VisitDto> findVisitsInPeriod(Instant from, Instant to);
-//
-//    /** (h) visits for <id> during [from, to]. */
-//    Flux<VisitDto> findVisitsByDoctorInPeriod(
-//            UUID id, Instant from, Instant to);
+
+      Flux<HistoryProjection> getVisitsInPeriod(Instant from, Instant to);
+
+      Flux<HistoryProjection> getVisitsByDoctorInPeriod(String id, Instant from, Instant to);
 //
 //    /** (i) month of the year with the most sick-leave certificates. */
 //    Mono<MostIssuedMonthDto> findBusiestSickLeaveMonth();
@@ -47,4 +29,3 @@ public interface ReportService {
 //    /** (j) top-N doctors by issued sick leaves. */
 //    Flux<DoctorSickLeaveCountDto> findTopDoctorsBySickLeaves(int topN);
 }
-

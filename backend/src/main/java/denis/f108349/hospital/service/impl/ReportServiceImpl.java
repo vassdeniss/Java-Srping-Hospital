@@ -1,16 +1,19 @@
 package denis.f108349.hospital.service.impl;
 
-import denis.f108349.hospital.data.model.Patient;
-import denis.f108349.hospital.data.projection.DiagnosisCountProjection;
+import denis.f108349.hospital.data.projection.HistoryProjection;
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.repo.VisitRepository;
+import denis.f108349.hospital.dto.DiagnosisCountDto;
 import denis.f108349.hospital.dto.DoctorPatientCountDto;
+import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.ReportService;
 import denis.f108349.hospital.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.Instant;
 
 // TODO: Test
 @Service
@@ -21,13 +24,34 @@ public class ReportServiceImpl implements ReportService {
     private final UserService userService;
     
     @Override
-    public Flux<Patient> getAllPatientsByDiagnosis(String diagnosisCode) {
-        return this.patientRepository.findPatientsByDiagnosis(diagnosisCode);
+    public Flux<PatientDto> getAllPatientsByDiagnosis(String diagnosisCode) {
+        return this.patientRepository.findPatientsByDiagnosis(diagnosisCode)
+                .flatMap(patient ->
+                        userService.getUserById(patient.getKeycloakId())
+                                .map(user -> new PatientDto(patient, user, null))
+                );
     }
     
     @Override
-    public Flux<DiagnosisCountProjection> getCommonDiagnosisCount() {
-        return this.visitRepository.findMostCommonDiagnoses();
+    public Flux<DiagnosisCountDto> getCommonDiagnosisCount() {
+        return this.visitRepository.findMostCommonDiagnoses()
+                .map(proj -> new DiagnosisCountDto(proj.code(), proj.name(), proj.total()));
+    }
+    
+    @Override
+    public Flux<PatientDto> getPatientsByGpDoctorId(String id) {
+        return this.patientRepository.findByGpDoctorId(id)
+            .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
+                .flatMap(patientUser -> Mono.just(new PatientDto(patient, patientUser, null)))
+            );
+    }
+    
+    @Override
+    public Flux<DoctorPatientCountDto> getCountPatientsPerGp() {
+        return this.patientRepository.countPatientsPerGp()
+            .flatMap(doctor -> this.userService.getUserById(doctor.id())
+                .flatMap(doctorUser -> Mono.just(new DoctorPatientCountDto(doctorUser, doctor.total())))
+            );
     }
 
     @Override
@@ -35,5 +59,33 @@ public class ReportServiceImpl implements ReportService {
         return this.visitRepository.countVisitsPerDoctor()
                 .flatMap(doctor -> this.userService.getUserById(doctor.id())
                         .flatMap(doctorUser -> Mono.just(new DoctorPatientCountDto(doctorUser, doctor.total()))));
+    }
+
+    @Override
+    public Flux<HistoryProjection> getVisitsInPeriod(Instant from, Instant to) {
+        return this.flatMapVisit(this.visitRepository.findVisitsInPeriod(from, to));
+    }
+
+    @Override
+    public Flux<HistoryProjection> getVisitsByDoctorInPeriod(String id, Instant from, Instant to) {
+        return this.flatMapVisit(this.visitRepository.findVisitsByDoctorInPeriod(id, from, to));    
+    }
+    
+    private Flux<HistoryProjection> flatMapVisit(Flux<HistoryProjection> visits) {
+        return visits.flatMap(visit -> this.userService.getUserById(visit.patientId())
+                    .flatMap(patient -> this.userService.getUserById(visit.doctorId())
+                        .flatMap(doctor -> Mono.just(new HistoryProjection(
+                            visit.patientId(),
+                            visit.doctorId(),
+                            patient.getFirstName() + " " + patient.getLastName(),
+                            doctor.getFirstName() + " " + doctor.getLastName(),
+                            visit.diagnosis(),
+                            visit.treatment(),
+                            visit.dosage(),
+                            visit.frequency(),
+                            visit.duration(),
+                            visit.sickLeaveDays(),
+                            visit.visitDate()
+            )))));    
     }
 }

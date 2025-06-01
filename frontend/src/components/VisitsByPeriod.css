@@ -1,0 +1,147 @@
+.visits-by-period-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.visits-by-period-header {
+  margin-bottom: 1.5rem;
+}
+
+.visits-by-period-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.date-range-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.date-input-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.date-input-group input {
+  padding: 0.6rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.input-list {
+  height: 42px;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.generate-btn {
+  align-self: flex-end;
+  padding: 0.6rem 1.2rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.generate-btn:hover {
+  background-color: #2980b9;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: #3498db;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.visits-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.visits-history-table th {
+  background-color: #3498db;
+  color: white;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.visits-history-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.visits-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.visits-history-table tr:hover {
+  background-color: #f5f9fc;
+}
+
+.visit-date {
+  white-space: nowrap;
+}
+
+.diagnosis-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.treatment-cell {
+  max-width: 200px;
+}
+
+.sick-leave-days {
+  text-align: center;
+  font-weight: 600;
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .date-range-selector {
+    flex-direction: column;
+  }
+
+  .generate-btn {
+    align-self: flex-start;
+  }
+
+  .visits-history-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

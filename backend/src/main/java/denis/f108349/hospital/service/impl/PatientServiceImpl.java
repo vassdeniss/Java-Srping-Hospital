@@ -1,6 +1,5 @@
 package denis.f108349.hospital.service.impl;
 
-import denis.f108349.hospital.data.projection.DoctorPatientCountProjection;
 import denis.f108349.hospital.data.projection.HistoryProjection;
 import denis.f108349.hospital.data.repo.PatientRepository;
 import denis.f108349.hospital.data.model.Patient;
@@ -28,11 +27,6 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Flux<Patient> getPatientsByGpDoctorId(String id) {
-        return this.patientRepository.findByGpDoctorId(id);
-    }
-
-    @Override
     public Flux<Patient> getAllPatients() {
         return this.patientRepository.findAll();
     }
@@ -40,11 +34,6 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Flux<HistoryProjection> getPatientHistory(String patientId) {
         return this.patientRepository.findPatientHistoryById(patientId);
-    }
-
-    @Override
-    public Flux<DoctorPatientCountProjection> getCountPatientsPerGp() {
-        return this.patientRepository.countPatientsPerGp();
     }
 
     @Override

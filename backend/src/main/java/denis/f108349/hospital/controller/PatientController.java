@@ -126,10 +126,12 @@ public class PatientController {
     @GetMapping("/{patientId}/history")
     public Flux<HistoryProjection> getPatientHistory(@PathVariable String patientId) {
         return this.patientService.getPatientHistory(patientId)
-            .flatMap(history -> this.userService.getUserById(history.id())
+            .flatMap(history -> this.userService.getUserById(history.doctorId())
                     .flatMap(user -> Mono.just(new HistoryProjection(
-                            history.id(),
+                            history.patientId(),
+                            history.doctorId(),
                             user.getFirstName() + " " + user.getLastName(),
+                            "",
                             history.diagnosis(),
                             history.treatment(),
                             history.dosage(),
@@ -138,23 +140,5 @@ public class PatientController {
                             history.sickLeaveDays(),
                             history.visitDate()
                     ))));
-    }
-    
-    // TODO: api info
-    @GetMapping("/gps/{id}")
-    public Flux<PatientDto> getPatientsByGp(@PathVariable String id) {
-        return this.patientService.getPatientsByGpDoctorId(id)
-            .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
-                .flatMap(patientUser -> Mono.just(new PatientDto(patient, patientUser, null)))
-            );
-    }
-    
-    // TODO: api info
-    @GetMapping("/gps/count")
-    public Flux<DoctorPatientCountDto> getPatientsByGpCount() {
-        return this.patientService.getCountPatientsPerGp()
-            .flatMap(doctor -> this.userService.getUserById(doctor.id())
-                .flatMap(doctorUser -> Mono.just(new DoctorPatientCountDto(doctorUser, doctor.total())))
-            );
     }
 }

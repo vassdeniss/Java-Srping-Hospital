@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getAllGps } from '../api/doctorApi';
-import { getPatientsByGp } from '../api/patientApi';
+import { getPatientsByGp } from '../api/reportApi';
 
 import PatientList from './PatientList';
 

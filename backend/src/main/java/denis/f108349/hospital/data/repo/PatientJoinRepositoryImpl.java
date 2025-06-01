@@ -19,7 +19,8 @@ public class PatientJoinRepositoryImpl implements PatientJoinRepository {
     public Flux<HistoryProjection> findPatientHistoryById(String patientId) {
         String sql = """
             SELECT
-              do.keycloak_id AS id,
+              p.keycloak_id AS patient_id,
+              do.keycloak_id AS doctor_id,
               d.name AS diagnosis,
               m.name AS treatment,
               pm.dosage AS dosage,
@@ -41,7 +42,9 @@ public class PatientJoinRepositoryImpl implements PatientJoinRepository {
         return this.databaseClient.sql(sql)
                 .bind("patientId", patientId)
                 .map((row, meta) -> new HistoryProjection(
-                        row.get("id", String.class),
+                        row.get("patient_id", String.class),
+                        row.get("doctor_id", String.class),
+                        "",
                         "",
                         row.get("diagnosis", String.class),
                         row.get("treatment", String.class),

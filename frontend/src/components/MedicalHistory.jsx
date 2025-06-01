@@ -6,7 +6,7 @@ const MedicalHistory = ({ history }) => {
       {history.map((entry, index) => (
         <div className="history-card" key={index}>
           <p>
-            <strong>Name:</strong> {entry.name}
+            <strong>Name:</strong> {entry.doctorName || entry.patientName}
           </p>
           <p>
             <strong>Diagnosis:</strong> {entry.diagnosis}
