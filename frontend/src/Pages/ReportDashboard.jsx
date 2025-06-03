@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useState } from 'react';
 import { getPatientsByDiagnosis } from '../api/reportApi';
 import GpCount from '../components/GpCount';
 import PatientList from '../components/PatientList';
@@ -11,16 +10,9 @@ import VisitsByPeriod from '../components/VisitsByPeriod';
 import './ReportDashboard.css';
 
 export default function ReportsDashboard() {
-  const { isAuth, redirectToLogin } = useOutletContext();
   const [activeReport, setActiveReport] = useState(null);
   const [diagnosisCode, setDiagnosisCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isAuth) {
-      redirectToLogin();
-    }
-  }, [isAuth]);
 
   const fetchPatientsByDiagnosis = async () => {
     setIsLoading(true);

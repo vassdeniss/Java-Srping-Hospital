@@ -1,4 +1,3 @@
-import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { deleteUserFromKeycloak, updateUserRoleToDoctor } from '../api/userApi';
 import { createDoctor, assignToDoctor, getAllDoctors } from '../api/doctorApi';
@@ -13,7 +12,6 @@ import './adminDashboard.css';
 import PromoteModal from '../components/PromoteModal';
 
 const AdminDashboard = () => {
-  const { isAuth, redirectToLogin, roles } = useOutletContext();
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [showPromoteModal, setShowPromoteModal] = useState(false);
@@ -23,10 +21,6 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isAuth || !roles.includes('admin')) {
-        return redirectToLogin();
-      }
-
       try {
         setPatients(await getAllPatients());
         setDoctors(await getAllDoctors());
@@ -37,7 +31,7 @@ const AdminDashboard = () => {
     };
 
     fetchData();
-  }, [isAuth, roles]);
+  }, []);
 
   const handleDeletePatient = async (patientId) => {
     if (!window.confirm('Are you sure you want to delete this patient?')) {

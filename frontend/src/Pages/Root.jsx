@@ -47,20 +47,13 @@ const Root = () => {
     return <div>Loading...</div>;
   }
 
-  function handleLogin() {
-    keycloak.login();
-  }
-
   return (
     <div className="root-container">
       <Nav />
       <main className="content-wrapper">
         <Outlet
           context={{
-            isAuth: keycloak.authenticated,
             id: keycloak.tokenParsed?.sub,
-            redirectToLogin: handleLogin,
-            roles: keycloak.tokenParsed?.realm_access?.roles,
           }}
         />
       </main>

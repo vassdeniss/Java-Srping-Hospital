@@ -1,9 +1,20 @@
+import keycloak from '../keycloak';
+
 export default async function apiRequest(
   url,
   { method = 'GET', body = null, headers = {} } = {}
 ) {
+  try {
+    await keycloak.updateToken(5);
+  } catch (err) {
+    console.error('Token refresh failed', err);
+    throw new Error('Unauthorized');
+  }
+
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    'Authorization': `Bearer ${keycloak.token}`,
+
     ...headers,
   };
 

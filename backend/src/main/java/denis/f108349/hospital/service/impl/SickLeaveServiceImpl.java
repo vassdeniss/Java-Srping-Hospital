@@ -4,9 +4,11 @@ import denis.f108349.hospital.data.model.SickLeave;
 import denis.f108349.hospital.data.repo.SickLeaveRepository;
 import denis.f108349.hospital.service.SickLeaveService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+// TODO: security test
 // TODO: Test
 @Service
 @RequiredArgsConstructor
@@ -14,6 +16,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
     private final SickLeaveRepository sickLeaveRepository;
 
     @Override
+    @PreAuthorize("hasRole('doctor')")
     public Mono<SickLeave> createSickLeave(SickLeave sickLeave) {
         return this.sickLeaveRepository.save(sickLeave);
     }

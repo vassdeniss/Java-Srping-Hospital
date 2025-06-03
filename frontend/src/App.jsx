@@ -8,6 +8,7 @@ import PatientDashboard from './Pages/PatientDashboard';
 import AdminDashboard from './Pages/AdminDashboard';
 import DoctorDashboard from './Pages/DoctorDashboard';
 import ReportDashboard from './Pages/ReportDashboard';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -20,19 +21,35 @@ const router = createBrowserRouter([
       },
       {
         path: '/dashboard',
-        element: <PatientDashboard />,
+        element: (
+          <ProtectedRoute requiredRoles={['patient']}>
+            <PatientDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/admin/dashboard',
-        element: <AdminDashboard />,
+        element: (
+          <ProtectedRoute requiredRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/doctor/dashboard',
-        element: <DoctorDashboard />,
+        element: (
+          <ProtectedRoute requiredRoles={['doctor']}>
+            <DoctorDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/reports',
-        element: <ReportDashboard />,
+        element: (
+          <ProtectedRoute requiredRoles={['admin']}>
+            <ReportDashboard />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

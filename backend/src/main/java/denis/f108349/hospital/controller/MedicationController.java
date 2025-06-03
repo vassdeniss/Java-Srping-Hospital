@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 // TODO: test
-// TODO: postman
 @RestController
 @RequestMapping("/api/medications")
 @RequiredArgsConstructor

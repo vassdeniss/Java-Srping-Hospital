@@ -11,7 +11,7 @@ import { createSickLeave } from '../api/sickLeaveApi';
 import MedicalHistory from '../components/MedicalHistory';
 
 export default function DoctorDashboard() {
-  const { isAuth, id, redirectToLogin } = useOutletContext();
+  const { id } = useOutletContext();
   const [doctor, setDoctor] = useState(null);
   const [visits, setVisits] = useState([]);
   const [medication, setMedication] = useState([]);
@@ -33,10 +33,6 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isAuth) {
-        return redirectToLogin();
-      }
-
       try {
         const data = await getDoctor(id);
         setDoctor(data);

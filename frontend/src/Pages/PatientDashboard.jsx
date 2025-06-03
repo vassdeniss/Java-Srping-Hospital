@@ -12,7 +12,7 @@ import { createVisit, getVisits } from '../api/visitApi';
 import MedicalHistory from '../components/MedicalHistory';
 
 const PatientDashboard = () => {
-  const { isAuth, id, redirectToLogin } = useOutletContext();
+  const { id } = useOutletContext();
   const [patient, setPatient] = useState(null);
   const [showDoctorsList, setShowDoctorsList] = useState(false);
   const [doctors, setDoctors] = useState([]);
@@ -24,10 +24,6 @@ const PatientDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isAuth) {
-        return redirectToLogin();
-      }
-
       try {
         const data = await getPatient(id);
         setPatient(data);

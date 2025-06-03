@@ -9,12 +9,14 @@ import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.ReportService;
 import denis.f108349.hospital.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
+// TODO: security test
 // TODO: Test
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class ReportServiceImpl implements ReportService {
     private final UserService userService;
     
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<PatientDto> getAllPatientsByDiagnosis(String diagnosisCode) {
         return this.patientRepository.findPatientsByDiagnosis(diagnosisCode)
                 .flatMap(patient ->
@@ -33,12 +36,14 @@ public class ReportServiceImpl implements ReportService {
     }
     
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<DiagnosisCountDto> getCommonDiagnosisCount() {
         return this.visitRepository.findMostCommonDiagnoses()
                 .map(proj -> new DiagnosisCountDto(proj.code(), proj.name(), proj.total()));
     }
     
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<PatientDto> getPatientsByGpDoctorId(String id) {
         return this.patientRepository.findByGpDoctorId(id)
             .flatMap(patient -> this.userService.getUserById(patient.getKeycloakId())
@@ -47,6 +52,7 @@ public class ReportServiceImpl implements ReportService {
     }
     
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<DoctorPatientCountDto> getCountPatientsPerGp() {
         return this.patientRepository.countPatientsPerGp()
             .flatMap(doctor -> this.userService.getUserById(doctor.id())
@@ -55,6 +61,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<DoctorPatientCountDto> getVisitsPerDoctor() {
         return this.visitRepository.countVisitsPerDoctor()
                 .flatMap(doctor -> this.userService.getUserById(doctor.id())
@@ -62,11 +69,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<HistoryProjection> getVisitsInPeriod(Instant from, Instant to) {
         return this.flatMapVisit(this.visitRepository.findVisitsInPeriod(from, to));
     }
 
     @Override
+    @PreAuthorize("hasRole('admin')")
     public Flux<HistoryProjection> getVisitsByDoctorInPeriod(String id, Instant from, Instant to) {
         return this.flatMapVisit(this.visitRepository.findVisitsByDoctorInPeriod(id, from, to));    
     }
