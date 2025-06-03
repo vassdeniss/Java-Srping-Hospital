@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-// TODO: security test
 @Service
 @RequiredArgsConstructor
 public class DoctorSpecialtyServiceImpl implements DoctorSpecialtyService {

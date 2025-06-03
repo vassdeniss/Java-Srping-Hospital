@@ -43,3 +43,13 @@ export const getVisitsInPeriodByDoctorId = async (id, startDate, endDate) => {
     `http://localhost:8080/api/reports/doctors/visits/period/${id}?${queryParams}`
   );
 };
+
+export const getBusiestSickLeaveMonth = async () => {
+  return apiRequest(
+    'http://localhost:8080/api/reports/leaves/most-issued-month'
+  );
+};
+
+export const getTopDoctorsBySickLeaves = async () => {
+  return apiRequest('http://localhost:8080/api/reports/leaves/top-doctors');
+};

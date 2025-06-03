@@ -1,0 +1,138 @@
+.top-doctors-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.top-doctors-header {
+  margin-bottom: 1.5rem;
+}
+
+.top-doctors-title {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.doctors-leaderboard {
+  display: grid;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.doctor-leader-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 1.2rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doctor-leader-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.leader-rank {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #3498db;
+  min-width: 40px;
+  text-align: center;
+}
+
+.doctor-leader-info {
+  flex: 1;
+  margin: 0 1.5rem;
+}
+
+.doctor-leader-name {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.doctor-leader-email {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.sick-leave-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.count-number {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #e74c3c;
+  line-height: 1;
+}
+
+.count-label {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.2rem;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: #3498db;
+}
+
+.doctor-leader-card:nth-child(1) .leader-rank {
+  font-size: 1.5rem;
+  color: #f1c40f;
+}
+
+.doctor-leader-card:nth-child(2) .leader-rank {
+  color: #bdc3c7;
+}
+
+.doctor-leader-card:nth-child(3) .leader-rank {
+  color: #e67e22;
+}
+
+.doctor-leader-card:nth-child(1) .count-number {
+  font-size: 2rem;
+}
+
+.doctor-leader-card:nth-child(2) .count-number,
+.doctor-leader-card:nth-child(3) .count-number {
+  font-size: 1.8rem;
+}
+
+@media (max-width: 768px) {
+  .doctor-leader-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+  }
+
+  .leader-rank {
+    margin-bottom: 0.8rem;
+  }
+
+  .doctor-leader-info {
+    margin: 0.8rem 0;
+    width: 100%;
+  }
+
+  .sick-leave-count {
+    align-self: flex-end;
+    margin-top: 0.8rem;
+  }
+}

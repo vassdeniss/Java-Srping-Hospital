@@ -1,30 +1,17 @@
 import { useState } from 'react';
-import { getPatientsByDiagnosis } from '../api/reportApi';
 import GpCount from '../components/GpCount';
-import PatientList from '../components/PatientList';
 import GpPatients from '../components/GpPatients';
 import VisitsPerDoctor from '../components/VisitsPerDoctor';
 import CommonDiagnosis from '../components/CommonDiagnosis';
 import VisitsByPeriod from '../components/VisitsByPeriod';
+import BusiestSickLeaveMonth from '../components/BusiestSickLeaveMonth';
+import TopDoctorsSickLeaves from '../components/TopDoctorsSickLeaves';
+import PatientDiagnosis from '../components/PatientDiagnosis';
 
 import './ReportDashboard.css';
 
 export default function ReportsDashboard() {
   const [activeReport, setActiveReport] = useState(null);
-  const [diagnosisCode, setDiagnosisCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchPatientsByDiagnosis = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getPatientsByDiagnosis(diagnosisCode);
-      setPatients(data);
-    } catch (error) {
-      console.error('Error fetching patients:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="reports-container">
@@ -76,48 +63,30 @@ export default function ReportsDashboard() {
           <h3>Visits by Period</h3>
           <p>View visit statistics for specific time periods</p>
         </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('busiest-sick-leave')}
+        >
+          <h3>Busiest Sick Leave Month</h3>
+          <p>View the month with highest sick leave issuance</p>
+        </div>
+        <div
+          className="report-card"
+          onClick={() => setActiveReport('top-doctors-sick-leaves')}
+        >
+          <h3>Top Doctors by Sick Leaves</h3>
+          <p>View doctors who issue the most sick leaves</p>
+        </div>
       </div>
 
-      {isLoading && (
-        <div className="loading-state">
-          <p>Loading data...</p>
-        </div>
-      )}
-
-      {activeReport === 'diagnosis-patients' && (
-        <div className="report-content">
-          <h2 className="section-title">Patients by Diagnosis Code</h2>
-          <div className="report-controls">
-            <input
-              type="text"
-              className="report-input"
-              placeholder="Enter diagnosis code (e.g., J45.901)"
-              value={diagnosisCode}
-              onChange={(e) => setDiagnosisCode(e.target.value)}
-            />
-            <button
-              className="report-button"
-              onClick={fetchPatientsByDiagnosis}
-            >
-              Generate Report
-            </button>
-          </div>
-
-          {patients.length > 0 ? (
-            <PatientList patients={patients} />
-          ) : (
-            <p className="no-results">
-              No patients found matching this diagnosis code
-            </p>
-          )}
-        </div>
-      )}
-
+      {activeReport === 'diagnosis-patients' && <PatientDiagnosis />}
       {activeReport === 'most-common-diagnoses' && <CommonDiagnosis />}
       {activeReport === 'gp-patients' && <GpPatients />}
       {activeReport === 'gp-patient-counts' && <GpCount />}
       {activeReport === 'visits-per-doctor' && <VisitsPerDoctor />}
       {activeReport === 'visits-by-period' && <VisitsByPeriod />}
+      {activeReport === 'busiest-sick-leave' && <BusiestSickLeaveMonth />}
+      {activeReport === 'top-doctors-sick-leaves' && <TopDoctorsSickLeaves />}
     </div>
   );
 }

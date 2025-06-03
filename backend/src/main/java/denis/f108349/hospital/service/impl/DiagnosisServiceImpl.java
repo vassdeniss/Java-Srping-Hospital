@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 // TODO: Test
-// TODO: security test
 @Service
 @RequiredArgsConstructor
 public class DiagnosisServiceImpl implements DiagnosisService {

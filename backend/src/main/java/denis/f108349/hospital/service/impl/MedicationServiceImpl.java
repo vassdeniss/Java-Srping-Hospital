@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 // TODO: Test
-// TODO: security test
 @Service
 @RequiredArgsConstructor
 public class MedicationServiceImpl implements MedicationService {

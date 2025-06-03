@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: security test
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {

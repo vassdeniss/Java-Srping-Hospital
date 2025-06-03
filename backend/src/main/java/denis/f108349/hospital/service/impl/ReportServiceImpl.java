@@ -1,10 +1,13 @@
 package denis.f108349.hospital.service.impl;
 
 import denis.f108349.hospital.data.projection.HistoryProjection;
+import denis.f108349.hospital.data.projection.MostIssuedMonthProjection;
 import denis.f108349.hospital.data.repo.PatientRepository;
+import denis.f108349.hospital.data.repo.SickLeaveRepository;
 import denis.f108349.hospital.data.repo.VisitRepository;
 import denis.f108349.hospital.dto.DiagnosisCountDto;
 import denis.f108349.hospital.dto.DoctorPatientCountDto;
+import denis.f108349.hospital.dto.DoctorSickLeaveCountDto;
 import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.ReportService;
 import denis.f108349.hospital.service.UserService;
@@ -16,7 +19,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
-// TODO: security test
 // TODO: Test
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class ReportServiceImpl implements ReportService {
     private final PatientRepository patientRepository;
     private final VisitRepository visitRepository;
     private final UserService userService;
+    private final SickLeaveRepository sickLeaveRepository;
     
     @Override
     @PreAuthorize("hasRole('admin')")
@@ -79,7 +82,21 @@ public class ReportServiceImpl implements ReportService {
     public Flux<HistoryProjection> getVisitsByDoctorInPeriod(String id, Instant from, Instant to) {
         return this.flatMapVisit(this.visitRepository.findVisitsByDoctorInPeriod(id, from, to));    
     }
-    
+
+    @Override
+    @PreAuthorize("hasRole('admin')")
+    public Mono<MostIssuedMonthProjection> getBusiestSickLeaveMonth() {
+        return this.sickLeaveRepository.findMonthWithMostSickLeaves();
+    }
+
+    @Override
+    @PreAuthorize("hasRole('admin')")
+    public Flux<DoctorSickLeaveCountDto> getTopDoctorsBySickLeaves() {
+        return this.sickLeaveRepository.findTopDoctorsBySickLeaves()
+                .flatMap(visit -> this.userService.getUserById(visit.doctorId())
+                        .flatMap(doctor -> Mono.just(new DoctorSickLeaveCountDto(doctor, visit.totalSickLeaves()))));
+    }
+
     private Flux<HistoryProjection> flatMapVisit(Flux<HistoryProjection> visits) {
         return visits.flatMap(visit -> this.userService.getUserById(visit.patientId())
                     .flatMap(patient -> this.userService.getUserById(visit.doctorId())

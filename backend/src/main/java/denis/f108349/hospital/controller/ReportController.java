@@ -1,14 +1,17 @@
 package denis.f108349.hospital.controller;
 
 import denis.f108349.hospital.data.projection.HistoryProjection;
+import denis.f108349.hospital.data.projection.MostIssuedMonthProjection;
 import denis.f108349.hospital.dto.DiagnosisCountDto;
 import denis.f108349.hospital.dto.DoctorPatientCountDto;
+import denis.f108349.hospital.dto.DoctorSickLeaveCountDto;
 import denis.f108349.hospital.dto.PatientDto;
 import denis.f108349.hospital.service.ReportService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
@@ -58,5 +61,15 @@ public class ReportController {
                                                                @RequestParam Instant startDate,
                                                                @RequestParam Instant endDate) {
         return this.reportService.getVisitsByDoctorInPeriod(id, startDate, endDate);
+    }
+    
+    @GetMapping("/leaves/most-issued-month")
+    public Mono<MostIssuedMonthProjection> getMostIssuedSickLeaveMonth() {
+        return this.reportService.getBusiestSickLeaveMonth();
+    }
+    
+    @GetMapping("/leaves/top-doctors")
+    public Flux<DoctorSickLeaveCountDto> getTopDoctorsBySickLeaves() {
+        return this.reportService.getTopDoctorsBySickLeaves();
     }
 }
