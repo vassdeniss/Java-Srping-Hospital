@@ -15,7 +15,8 @@ const Root = () => {
     if (initialized && keycloak.authenticated && keycloak.tokenParsed) {
       const isNew =
         !keycloak.tokenParsed?.realm_access?.roles.includes('patient') &&
-        !keycloak.tokenParsed?.realm_access?.roles.includes('doctor');
+        !keycloak.tokenParsed?.realm_access?.roles.includes('doctor') &&
+        !keycloak.tokenParsed?.realm_access?.roles.includes('admin');
 
       const data = {
         keycloakId: keycloak.tokenParsed.sub,

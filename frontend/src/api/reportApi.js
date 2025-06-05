@@ -2,24 +2,24 @@ import apiRequest from './baseApi';
 
 export const getPatientsByDiagnosis = async (code) => {
   return apiRequest(
-    `http://localhost:8080/api/reports/diagnoses/${code}/patients`
+    `/api/reports/diagnoses/${code}/patients`
   );
 };
 
 export const getMostCommonDiagnosis = async () => {
-  return apiRequest('http://localhost:8080/api/reports/diagnoses/common');
+  return apiRequest('/api/reports/diagnoses/common');
 };
 
 export const getPatientsByGp = async (gpId) => {
-  return apiRequest(`http://localhost:8080/api/reports/gps/${gpId}/patients`);
+  return apiRequest(`/api/reports/gps/${gpId}/patients`);
 };
 
 export const getPatientsByGpCount = async () => {
-  return apiRequest('http://localhost:8080/api/reports/gps/count');
+  return apiRequest('/api/reports/gps/count');
 };
 
 export const getVisitsPerDoctor = async () => {
-  return apiRequest('http://localhost:8080/api/reports/doctors/visits');
+  return apiRequest('/api/reports/doctors/visits');
 };
 
 export const getVisitsInPeriod = async (startDate, endDate) => {
@@ -28,9 +28,7 @@ export const getVisitsInPeriod = async (startDate, endDate) => {
     endDate: endDate.toISOString(),
   });
 
-  return apiRequest(
-    `http://localhost:8080/api/reports/doctors/visits/period?${queryParams}`
-  );
+  return apiRequest(`/api/reports/doctors/visits/period?${queryParams}`);
 };
 
 export const getVisitsInPeriodByDoctorId = async (id, startDate, endDate) => {
@@ -39,17 +37,13 @@ export const getVisitsInPeriodByDoctorId = async (id, startDate, endDate) => {
     endDate: endDate.toISOString(),
   });
 
-  return apiRequest(
-    `http://localhost:8080/api/reports/doctors/visits/period/${id}?${queryParams}`
-  );
+  return apiRequest(`/api/reports/doctors/visits/period/${id}?${queryParams}`);
 };
 
 export const getBusiestSickLeaveMonth = async () => {
-  return apiRequest(
-    'http://localhost:8080/api/reports/leaves/most-issued-month'
-  );
+  return apiRequest('/leaves/most-issued-month');
 };
 
 export const getTopDoctorsBySickLeaves = async () => {
-  return apiRequest('http://localhost:8080/api/reports/leaves/top-doctors');
+  return apiRequest('/api/reports/leaves/top-doctors');
 };

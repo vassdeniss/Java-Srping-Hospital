@@ -8,7 +8,7 @@ import {
 } from '../api/patientApi';
 import { getAllSpecialties } from '../api/specialtyApi';
 
-import './adminDashboard.css';
+import './AdminDashboard.css';
 import PromoteModal from '../components/PromoteModal';
 
 const AdminDashboard = () => {

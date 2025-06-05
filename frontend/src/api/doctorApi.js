@@ -1,30 +1,30 @@
 import apiRequest from './baseApi';
 
 export async function getAllDoctors() {
-  return apiRequest('http://localhost:8080/api/doctors/all');
+  return apiRequest('/api/doctors/all');
 }
 
 export async function getDoctor(id) {
-  return apiRequest('http://localhost:8080/api/doctors/' + id);
+  return apiRequest('/api/doctors/' + id);
 }
 
 export async function getAllGps() {
-  return apiRequest('http://localhost:8080/api/doctors/all?gp=true');
+  return apiRequest('/api/doctors/all?gp=true');
 }
 
 export async function getDoctorHistory(id) {
-  return apiRequest(`http://localhost:8080/api/doctors/${id}/history`);
+  return apiRequest(`/api/doctors/${id}/history`);
 }
 
 export async function createDoctor(patientId) {
-  return apiRequest('http://localhost:8080/api/doctors/create', {
+  return apiRequest('/api/doctors/create', {
     method: 'POST',
     body: { id: patientId },
   });
 }
 
 export async function assignToDoctor(doctorId, specialties) {
-  return apiRequest(`http://localhost:8080/api/doctors/assign/${doctorId}`, {
+  return apiRequest(`/api/doctors/assign/${doctorId}`, {
     method: 'POST',
     body: specialties,
   });

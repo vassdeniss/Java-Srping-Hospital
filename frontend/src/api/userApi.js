@@ -1,7 +1,7 @@
 import apiRequest from './baseApi';
 
 export async function createUserInBackend(data) {
-  return apiRequest('http://localhost:8080/api/patients/create', {
+  return apiRequest('/api/patients/create', {
     method: 'POST',
     body: data,
   });
@@ -10,7 +10,7 @@ export async function createUserInBackend(data) {
 export async function updateUserRoleToPatient(keycloakId) {
   const token = await getAdminToken();
   return apiRequest(
-    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
+    `/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
     {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
@@ -23,7 +23,7 @@ export async function updateUserRoleToDoctor(keycloakId) {
   const token = await getAdminToken();
   // Remove patient role
   await apiRequest(
-    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
+    `/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
     {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
@@ -32,7 +32,7 @@ export async function updateUserRoleToDoctor(keycloakId) {
   );
   // Add doctor role
   await apiRequest(
-    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
+    `/admin/realms/hospital/users/${keycloakId}/role-mappings/realm`,
     {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
@@ -44,7 +44,7 @@ export async function updateUserRoleToDoctor(keycloakId) {
 export async function deleteUserFromKeycloak(keycloakId) {
   const token = await getAdminToken();
   return apiRequest(
-    `http://localhost:8081/admin/realms/hospital/users/${keycloakId}`,
+    `/admin/realms/hospital/users/${keycloakId}`,
     {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +58,7 @@ async function getAdminToken() {
   const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
 
   const response = await fetch(
-    `http://localhost:8081/realms/hospital/protocol/openid-connect/token`,
+    `/realms/hospital/protocol/openid-connect/token`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

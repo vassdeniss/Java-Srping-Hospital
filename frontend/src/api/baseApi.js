@@ -14,7 +14,6 @@ export default async function apiRequest(
   const defaultHeaders = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${keycloak.token}`,
-
     ...headers,
   };
 
@@ -24,7 +23,10 @@ export default async function apiRequest(
     ...(body && { body: JSON.stringify(body) }),
   };
 
-  const response = await fetch(url, options);
+  const response = await fetch(
+    (import.meta.env.VITE_API_URL || 'http://localhost:8080') + url,
+    options
+  );
 
   if (!response.ok) {
     const errorText = await response.text();

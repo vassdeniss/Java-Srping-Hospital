@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql/mysql-server:latest
@@ -17,6 +15,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
+    networks:
+      - hospital-network
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -36,6 +36,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - hospital-network
 
   backend:
     build: ./backend
@@ -45,9 +47,32 @@ services:
       SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/hospital_spring
       SPRING_R2DBC_USERNAME: root
       SPRING_R2DBC_PASSWORD: root
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: hospital
+      KEYCLOAK_CLIENT_ID: hospital-spring-client
+      KEYCLOAK_CLIENT_SECRET: 3ZQd90sK2K3EZLjqmNhjYWmAlLYylyU0
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
+      - keycloak
+    networks:
+      - hospital-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://localhost:8080
+        - VITE_KEYCLOAK_URL=http://localhost:8081
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - hospital-network
 
 volumes:
   mysql-data:
+
+networks:
+  hospital-network:
+    driver: bridge

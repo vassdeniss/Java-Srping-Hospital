@@ -8,7 +8,7 @@ export async function createPrescribedMedication(
   duration,
   instructions
 ) {
-  return apiRequest('http://localhost:8080/api/prescriptions/create', {
+  return apiRequest('/api/prescriptions/create', {
     method: 'POST',
     body: {
       visitId,
